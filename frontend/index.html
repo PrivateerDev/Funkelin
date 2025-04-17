@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Funkelin</title>
+</head>
+<body>
+  <h1>Bienvenido a Funkelin</h1>
+  <button onclick="cargarMascotas()">Ver mascotas</button>
+  <ul id="lista-mascotas"></ul>
+
+  <script>
+    async function cargarMascotas() {
+      const res = await fetch("http://127.0.0.1:5000/api/mascotas");
+      const data = await res.json();
+      const lista = document.getElementById("lista-mascotas");
+      lista.innerHTML = "";
+      data.forEach(m => {
+        const item = document.createElement("li");
+        item.textContent = `${m.nombre} (${m.especie})`;
+        lista.appendChild(item);
+      });
+    }
+  </script>
+</body>
+</html>
+
