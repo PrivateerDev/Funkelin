@@ -1,0 +1,1 @@
+// Archivo JavaScript para Funkelin 
