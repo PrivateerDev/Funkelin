@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Any
 import logging
@@ -77,4 +78,22 @@ class Mascota(db.Model):  # type: ignore
             "nombre": getattr(self, "nombre", "Desconocido"),
             "tipo": getattr(self, "tipo", "Desconocido"),
             "edad": getattr(self, "edad", 0)
+=======
+from models import db  # Importar db desde models/__init__.py
+
+class Mascota(db.Model):
+    """Modelo para representar una mascota en la base de datos."""
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(80), nullable=False)
+    tipo = db.Column(db.String(80), nullable=False)
+    edad = db.Column(db.Integer, nullable=False)
+
+    def to_dict(self):
+        """Convierte la instancia de Mascota a un diccionario."""
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "tipo": self.tipo,
+            "edad": self.edad
+>>>>>>> f978f38 (Reinstanciación completa del backend:)
         }

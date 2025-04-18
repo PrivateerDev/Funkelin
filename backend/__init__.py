@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -60,3 +61,6 @@ def create_app():
 # ✅ Exponer solo elementos esenciales
 __all__ = ["db", "create_app"]
 logging.debug("Finalizando inicialización de `__init__.py`")  # DEBUG
+=======
+ 
+>>>>>>> f978f38 (Reinstanciación completa del backend:)

@@ -394,3 +394,56 @@
 2025-05-12 19:31:20,550 - DEBUG - Finalizando la inicialización de `routes/__init__.py`
 2025-05-12 19:31:20,609 - WARNING -  * Debugger is active!
 2025-05-12 19:31:20,616 - INFO -  * Debugger PIN: 791-497-308
+2025-05-12 19:31:46,512 - DEBUG - Iniciando la configuración del backend en `__init__.py`
+2025-05-12 19:31:46,520 - DEBUG - Finalizando inicialización de `__init__.py`
+2025-05-12 19:31:46,528 - DEBUG - Inicializando la instancia de SQLAlchemy
+2025-05-12 19:31:46,534 - DEBUG - Importando el modelo Mascota
+2025-05-12 19:31:46,609 - DEBUG - Iniciando la importación de Blueprints en `routes/__init__.py`
+2025-05-12 19:31:46,613 - DEBUG - Iniciando la importación de servicios en `services/__init__.py`
+2025-05-12 19:31:46,633 - DEBUG - Finalizando la inicialización de `services/__init__.py`
+2025-05-12 19:31:46,635 - DEBUG - Inicializando Blueprint para mascotas
+2025-05-12 19:31:46,639 - DEBUG - Finalizando la inicialización de `routes/__init__.py`
+2025-05-12 19:31:46,732 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-12 19:31:46,733 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-12 19:31:46,737 - INFO -  * Restarting with stat
+2025-05-12 19:31:48,024 - DEBUG - Iniciando la configuración del backend en `__init__.py`
+2025-05-12 19:31:48,031 - DEBUG - Finalizando inicialización de `__init__.py`
+2025-05-12 19:31:48,036 - DEBUG - Inicializando la instancia de SQLAlchemy
+2025-05-12 19:31:48,043 - DEBUG - Importando el modelo Mascota
+2025-05-12 19:31:48,109 - DEBUG - Iniciando la importación de Blueprints en `routes/__init__.py`
+2025-05-12 19:31:48,114 - DEBUG - Iniciando la importación de servicios en `services/__init__.py`
+2025-05-12 19:31:48,131 - DEBUG - Finalizando la inicialización de `services/__init__.py`
+2025-05-12 19:31:48,131 - DEBUG - Inicializando Blueprint para mascotas
+2025-05-12 19:31:48,136 - DEBUG - Finalizando la inicialización de `routes/__init__.py`
+2025-05-12 19:31:48,204 - WARNING -  * Debugger is active!
+2025-05-12 19:31:48,212 - INFO -  * Debugger PIN: 791-497-308
+2025-05-12 21:52:56,742 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,743 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,743 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,743 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,743 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,744 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,744 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:52:56,745 - INFO - 127.0.0.1 - - [12/May/2025 21:52:56] "GET /api/debug HTTP/1.1" 200 -
+2025-05-12 21:53:17,369 - INFO - 127.0.0.1 - - [12/May/2025 21:53:17] "OPTIONS /api/mascotas/12 HTTP/1.1" 200 -
+2025-05-12 21:53:17,376 - DEBUG - Ejecutando `eliminar_mascota()` con ID 12
+2025-05-12 21:53:17,402 - INFO - 127.0.0.1 - - [12/May/2025 21:53:17] "DELETE /api/mascotas/12 HTTP/1.1" 200 -
+2025-05-12 21:53:17,414 - DEBUG - Ejecutando `get_mascotas()`
+2025-05-12 21:53:17,415 - DEBUG - Ejecutando `obtener_mascotas()`
+2025-05-12 21:53:17,424 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,424 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,424 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,425 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,425 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,425 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:17,432 - INFO - 127.0.0.1 - - [12/May/2025 21:53:17] "GET /api/mascotas/ HTTP/1.1" 200 -
+2025-05-12 21:53:29,056 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,058 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,058 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,058 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,058 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,058 - DEBUG - Convirtiendo Mascota a diccionario
+2025-05-12 21:53:29,060 - INFO - 127.0.0.1 - - [12/May/2025 21:53:29] "GET /api/debug HTTP/1.1" 200 -
+2025-05-13 16:15:36,071 - INFO -  * Detected change in 'C:\\Users\\marle\\Funkelin\\backend\\app.py', reloading
+2025-05-13 16:15:36,279 - INFO -  * Restarting with stat

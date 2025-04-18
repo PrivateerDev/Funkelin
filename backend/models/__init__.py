@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import logging
 from flask_sqlalchemy import SQLAlchemy
 
@@ -25,3 +26,9 @@ except ImportError as e:
     logging.error(f"⚠ Error al importar el modelo Mascota: {e}")  # ERROR
 
 __all__ = ["db", "Mascota"]
+=======
+ 
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()  # Instancia única de SQLAlchemy para todo el proyecto
+>>>>>>> f978f38 (Reinstanciación completa del backend:)

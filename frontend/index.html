@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<<<<<<< HEAD
 
 <header>
     <h1>🐾 Funkelin - Gestión de Mascotas 🚀</h1>
@@ -46,5 +47,46 @@
 
 <!-- ✅ Carga optimizada con defer -->
 <script src="app.js" defer></script>
+=======
+    <div class="container">
+        <header>
+            <h1>✨ Funkelin - Gestión de Mascotas ✨</h1>
+        </header>
+
+        <main>
+            <!-- Formulario para agregar mascotas -->
+            <section class="form-section">
+                <h2>Agregar una nueva mascota</h2>
+                <form id="mascotaForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre de la mascota:</label>
+                        <input type="text" id="nombre" placeholder="Ejemplo: Firulais" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="especie">Especie (Perro/Gato):</label>
+                        <input type="text" id="especie" placeholder="Ejemplo: Perro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edad">Edad de la mascota:</label>
+                        <input type="number" id="edad" min="1" placeholder="Ejemplo: 3" required>
+                    </div>
+                    <button type="submit">Agregar Mascota</button>
+                </form>
+            </section>
+
+            <!-- Lista de mascotas -->
+            <section class="list-section">
+                <h2>Lista de Mascotas 🐾</h2>
+                <ul id="mascotasLista" class="mascotas-list">
+                    <!-- Aquí se agregarán dinámicamente las mascotas -->
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>Hecho con 💖 para la gestión de tus mascotas | Funkelin</p>
+        </footer>
+    </div>
+>>>>>>> f978f38 (Reinstanciación completa del backend:)
 </body>
 </html>

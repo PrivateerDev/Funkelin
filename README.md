@@ -1,130 +1,472 @@
 
----
 
-## 📊 **Tabla comparativa global de niveles de logging aplicados en Funkelin. Aplicado a todo el proyecto, elegí estos para muestra:**
-
-| **Módulo**           | **DEBUG**                                                                                                           | **INFO**                                                                                     | **WARNING**                                                                                | **ERROR**                                                                                                |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `app.py` (principal) | Inicio de configuración y creación de tablas<br>Función `debug()`                                                   | Configuración de BD<br>Inicialización<br>Blueprints<br>Inicio de Flask<br>Consultas exitosas | Ausencia de mascotas en `/api/debug`                                                       | Fallo en creación de tablas<br>Registro de rutas<br>Errores en consulta a BD                             |
-| `Mascota` (modelo)   | Inicio y fin de `__init__`<br>Métodos de validación<br>`to_dict()`                                                  | Mascota creada exitosamente                                                                  | Entradas inválidas (nombre, tipo, edad)                                                    | Fallos al instanciar con datos incorrectos (ValueError)                                                  |
-| `routes/mascotas.py` | Inicialización del blueprint<br>Sanitización de texto<br>Ejecución de endpoints                                     | Pruebas (`/test`), recuperación, alta y baja de mascotas exitosas                            | POST vacío<br>Edad inválida<br>Validaciones fallidas<br>Eliminación de mascota inexistente | Excepciones en GET/POST/DELETE<br>Errores en base de datos                                               |
-| `mascota_service.py` | Inicio de funciones clave (`agregar`, `obtener`, `eliminar`)<br>Datos de entrada y proceso                          | Confirmaciones de alta, baja y consulta de mascotas                                          | Datos inválidos<br>Eliminación de mascota inexistente                                      | Fallos en inserción o consulta SQL<br>Errores lógicos                                                    |
-| `main.js` (frontend) | Sanitización de entradas<br>Inicio de funciones (`fetchMascotas`, `eliminarMascota`, etc.)<br>Carga inicial del DOM | Éxito en solicitudes GET/POST/DELETE<br>Actualización del DOM<br>Reseteo de formulario       | Validaciones de entrada fallidas<br>ID no válido<br>Elementos del DOM no encontrados       | Fallos en `fetch` (backend inaccesible, errores HTTP)<br>Error crítico al cargar mascotas o enviar datos |
+Con base en los tres archivos: (`init_db.py`, `app.py`, `__init__.py`), **evaluación consolidada a nivel del proyecto completo** según los 77 puntos de la lista de comprobación del recorrido sobre código:
 
 ---
 
-### ✅ **Resumen consolidado para tu reporte de práctica**
+### ✅ Lista de comprobación consolidada del recorrido sobre código. 
+**Recorrido #1**
 
-El sistema Funkelin demuestra una aplicación **consistente, estructurada y eficaz** del sistema de logging en todos sus componentes:
+**Id módulo:** `backend_funkelin` 
+**Num de recorrido:** 1 
+**Líder:** *(por definir)*
+**Autor:** Andrea Ortega
+**Fecha:** 13/05/2025
+**Requiere re inspección?:** No (con base en estos archivos)
 
-* **DEBUG** se utiliza para **monitorear procesos internos**, ideal para pruebas y debugging.
-* **INFO** registra operaciones exitosas o esperadas, que confirman el funcionamiento correcto del sistema.
-* **WARNING** indica **anomalías leves** que no interrumpen el sistema, pero que ayudan a mejorar su robustez frente a errores comunes de entrada o lógica.
-* **ERROR** permite detectar fallos graves que requieren atención inmediata, ya sean del lado del servidor (backend), modelo de datos o del cliente (frontend).
-
-El enfoque unificado en todos los módulos garantiza **trazabilidad completa**, facilidad de **mantenimiento**, y capacidad de **respuesta ante incidentes** tanto en entornos de desarrollo como en producción.
-
----
-
----
-
-### 🧩 **Aplicación de niveles de logging en `app.py`**
-
-| **Nivel de log** | **Ubicación / Acción registrada**                                                                                                                                                                                                                                                                                    | **Justificación**                                                                                                                         |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **DEBUG**        | - Inicio de la configuración principal<br>- Inicio de la creación de tablas<br>- Ejecución de la función `debug()`                                                                                                                                                                                                   | Permite rastrear paso a paso la inicialización de la aplicación y el proceso de depuración, útil para desarrollo y diagnóstico detallado. |
-| **INFO**         | - Configuración de base de datos exitosa<br>- Inicialización de la base de datos<br>- Configuración de CORS<br>- Registro exitoso del blueprint<br>- Creación de tablas<br>- Ejecución del endpoint principal (`/`)<br>- Cantidad de mascotas recuperadas en `/api/debug`<br>- Inicio del entorno Flask (`__main__`) | Registra el flujo normal de ejecución y uso del sistema. Es útil para verificar que el sistema opera correctamente.                       |
-| **WARNING**      | - Cuando no hay mascotas registradas en la base de datos (`/api/debug`)                                                                                                                                                                                                                                              | Señala un incidente leve que no detiene la ejecución, pero representa un comportamiento no ideal esperado por el usuario.                 |
-| **ERROR**        | - Si falla el registro del blueprint<br>- Si hay errores al crear las tablas<br>- Si ocurre una excepción durante la consulta de mascotas (por conexión o error inesperado)                                                                                                                                          | Captura fallos importantes que afectan la funcionalidad del sistema y necesitan atención inmediata.                                       |
-
----
-
-### ✅ **Resumen para reporte de práctica**
-
-En el módulo principal `app.py`, el sistema Funkelin implementa los niveles de log para monitorear correctamente las siguientes acciones:
-
-* **DEBUG** rastrea el flujo de configuración, creación de tablas y ejecución de depuración.
-* **INFO** documenta la correcta ejecución de procesos clave y uso habitual del sistema.
-* **WARNING** alerta de estados anómalos leves, como la ausencia de registros.
-* **ERROR** registra problemas críticos, como fallos en el registro de rutas o acceso a base de datos.
-
-Este esquema de logging fortalece la mantenibilidad del sistema, permite una depuración eficiente y da soporte a una operación confiable tanto en desarrollo como en producción.
-
----
-
-
-### 🧩 **Aplicación de niveles de logging en el modelo `Mascota`**
-
-| **Nivel de log** | **Ubicación / Acción registrada**                                                                                                                                               | **Justificación**                                                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **DEBUG**        | - Al iniciar y finalizar `__init__()`<br>- Al ejecutar cada método de validación (`validar_nombre`, `validar_tipo`, `validar_edad`)<br>- Al convertir a diccionario (`to_dict`) | Se rastrea el flujo de ejecución de forma precisa durante la creación y transformación del modelo. Permite seguir paso a paso cómo se procesan los datos. |
-| **INFO**         | - Al crear una mascota exitosamente (`Mascota creada exitosamente: {...}`)                                                                                                      | Documenta el uso esperado y correcto del modelo, útil para auditoría de registros exitosos.                                                               |
-| **WARNING**      | - Si el nombre, tipo o edad no cumple validaciones básicas                                                                                                                      | Señala incidentes leves como errores de usuario o entradas inválidas sin generar fallos críticos en el sistema.                                           |
-| **ERROR**        | - Si ocurre una excepción durante la inicialización del objeto (`ValueError`)                                                                                                   | Captura fallos inesperados que interrumpen la creación del objeto y requieren atención o depuración.                                                      |
-
----
-
-### ✅ **Resumen para reporte de práctica**
-
-En el modelo `Mascota`, se aplican los niveles de logging según el ciclo de vida del objeto:
-
-* **DEBUG** se usa para rastrear la ejecución desde la validación hasta la conversión del objeto.
-* **INFO** documenta instancias creadas exitosamente.
-* **WARNING** alerta sobre entradas inválidas antes de lanzar errores.
-* **ERROR** registra fallos en la creación de objetos por datos erróneos.
-
-Esta estructura permite monitorear el estado de los objetos del sistema, detectar errores comunes y mejorar la calidad de los datos en tiempo de ejecución.
-
----
-
----
-
-### 🧩 **Aplicación de niveles de logging en `routes/mascotas.py`**
-
-| **Nivel de log** | **Ubicación / Acción registrada**                                                                                                                                          | **Justificación**                                                                                                |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **DEBUG**        | - Inicialización del blueprint<br>- Sanitización de texto<br>- Ejecución de funciones clave como `get_mascotas()`, `post_mascota()` y `eliminar_mascota()`                 | Permite rastrear la ejecución detallada y depurar el comportamiento de cada funcionalidad.                       |
-| **INFO**         | - Confirmación del funcionamiento del endpoint `/test`<br>- Recuperación exitosa de mascotas<br>- Agregado correcto de una mascota<br>- Eliminación exitosa de una mascota | Registra acciones esperadas realizadas por el usuario en el uso normal del sistema.                              |
-| **WARNING**      | - Intento de POST sin datos<br>- Edad no válida en entrada<br>- Fallos de validación del modelo<br>- Intento de eliminar una mascota inexistente                           | Señala incidentes leves que no generan fallos del sistema, pero que deben ser atendidos.                         |
-| **ERROR**        | - Excepciones durante la recuperación de mascotas<br>- Fallos al agregar o eliminar mascotas, incluyendo errores de base de datos                                          | Captura eventos que impiden el funcionamiento correcto del sistema, útiles para diagnóstico de errores críticos. |
-
----
-
-### ✅ **Resumen para reporte de práctica**
-
-En el archivo de rutas `mascotas.py`, correspondiente al blueprint de la API del sistema Funkelin, se han aplicado correctamente los niveles de log propuestos:
-
-* **DEBUG** detalla el flujo de ejecución interno en las rutas, desde la inicialización hasta el manejo de solicitudes.
-* **INFO** documenta acciones exitosas llevadas a cabo por los usuarios, como pruebas de conexión, consultas y operaciones CRUD exitosas.
-* **WARNING** alerta sobre entradas inválidas o intentos de acción sobre recursos inexistentes, indicando problemas leves que no interrumpen el servicio.
-* **ERROR** registra fallos en operaciones críticas como acceso a base de datos o validaciones que no pueden ser satisfechas, permitiendo su posterior análisis.
-
-Esta implementación asegura la trazabilidad completa del comportamiento de la API y mejora tanto el mantenimiento como la capacidad de respuesta ante errores.
-
----
-
----
-
-### 🧩 **Aplicación de niveles de logging en `mascota_service.py`**
-
-| **Nivel de log** | **Ubicación / Acción registrada**                                                                                                                                             | **Justificación**                                                                                       |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **DEBUG**        | - Inicio de funciones `agregar_mascota()`, `obtener_mascotas()` y `eliminar_mascota()`<br>- Información detallada sobre los datos de entrada y ejecución de operaciones clave | Facilita el rastreo completo del flujo interno y el análisis de errores en desarrollo o pruebas.        |
-| **INFO**         | - Confirmación de que una mascota fue agregada exitosamente<br>- Confirmación de recuperación de lista de mascotas<br>- Confirmación de eliminación exitosa de una mascota    | Documenta que los procesos fundamentales del sistema se realizaron correctamente.                       |
-| **WARNING**      | - Validaciones fallidas de entrada en las funciones: nombre, tipo, edad e ID<br>- Intento de eliminar una mascota inexistente                                                 | Avisa sobre condiciones anómalas que no detienen el sistema pero indican un mal uso o riesgo potencial. |
-| **ERROR**        | - Fallos en operaciones de base de datos (inserción, consulta, eliminación)<br>- Errores de validación o lógica que impiden la finalización exitosa del proceso               | Captura fallos severos del sistema que requieren atención del desarrollador o administrador.            |
+| #  | Categoría                   | Subcategoría                     | Punto de verificación                                                     | Sí | No | N/A |
+| -- | --------------------------- | -------------------------------- | ------------------------------------------------------------------------- | -- | -- | --- |
+| 1  | Diseño y arquitectura       | Alineación con requerimientos    | ¿El código implementa fielmente el diseño detallado y los requerimientos? | ✔️ |    |     |
+| 2  |                             | Arquitectura planificada         | ¿Se respeta la arquitectura planificada (capas, modularización)?          | ✔️ |    |     |
+| 3  |                             | Estructura coherente             | ¿La estructura del proyecto es coherente y organizada?                    | ✔️ |    |     |
+| 4  | Principios de diseño        | SOLID/GRASP                      | ¿Se respetan los principios SOLID/GRASP?                                  | ✔️ |    |     |
+| 5  |                             | Separación de responsabilidades  | ¿Existe una clara separación de responsabilidades?                        | ✔️ |    |     |
+| 6  |                             | Dependencias                     | ¿Las dependencias entre módulos están minimizadas?                        | ✔️ |    |     |
+| 7  | Patrones de diseño          |                                  | ¿Se sigue un patrón de diseño adecuado para los problemas comunes?        | ✔️ |    |     |
+| 8  | Modularidad y cohesión      | Responsabilidad única            | ¿Cada clase tiene una única responsabilidad bien definida?                | ✔️ |    |     |
+| 9  |                             | Dominio del problema             | ¿El desglose de objetos/clases refleja el dominio del problema?           | ✔️ |    |     |
+| 10 |                             | Reusabilidad/desacoplamiento     | ¿Componentes reutilizables y desacoplados?                                | ✔️ |    |     |
+| 11 |                             | Transferencia de datos           | ¿La transferencia entre módulos es eficiente y segura?                    | ✔️ |    |     |
+| 12 | Calidad del código          | Claridad y mantenibilidad        | ¿El código es autoexplicativo y fácil de entender?                        | ✔️ |    |     |
+| 13 |                             | Nombres descriptivos             | ¿Los nombres de variables, métodos y clases son descriptivos?             | ✔️ |    |     |
+| 14 |                             | Convenciones                     | ¿Se siguen las convenciones de código establecidas?                       | ✔️ |    |     |
+| 15 |                             | Formato                          | ¿La indentación y formato son consistentes?                               | ✔️ |    |     |
+| 16 |                             | Comentarios                      | ¿Los comentarios son útiles sin ser redundantes?                          | ✔️ |    |     |
+| 17 | Eficiencia y rendimiento    | Algoritmos                       | ¿Se usan algoritmos apropiados para el contexto?                          | ✔️ |    |     |
+| 18 |                             | Cuellos de botella               | ¿Se han optimizado los puntos críticos de rendimiento?                    |    |    | ✔️  |
+| 19 |                             | Recursos del sistema             | ¿Uso eficiente de CPU, memoria, red, disco?                               |    |    | ✔️  |
+| 20 |                             | Escalabilidad                    | ¿Se consideró escalabilidad (concurrencia, carga)?                        | ✔️ |    |     |
+| 21 | Reusabilidad                | Diseño reutilizable              | ¿El código está diseñado para ser reutilizable?                           | ✔️ |    |     |
+| 22 |                             | Aprovechamiento de código previo | ¿Se aprovecha código existente?                                           | ✔️ |    |     |
+| 23 |                             | Duplicación                      | ¿Existe duplicación que podría refactorizarse?                            |    | ✔️ |     |
+| 24 |                             | Dead code                        | ¿Se evitan bloques de código comentados o no usados?                      | ✔️ |    |     |
+| 25 | Variables y tipos           | Inicialización                   | ¿Las variables se inicializan apropiadamente?                             | ✔️ |    |     |
+| 26 |                             | Tipos adecuados                  | ¿Tipos de datos apropiados?                                               | ✔️ |    |     |
+| 27 |                             | Ámbito                           | ¿Variables declaradas con el ámbito más pequeño posible?                  | ✔️ |    |     |
+| 28 |                             | Estructuras de datos             | ¿Estructuras óptimas para el caso de uso?                                 | ✔️ |    |     |
+| 29 |                             | Constantes                       | ¿Constantes bien definidas?                                               | ✔️ |    |     |
+| 30 |                             | Conversión de tipos              | ¿Conversión de tipos manejada correctamente?                              | ✔️ |    |     |
+| 31 | Gestión de memoria          | Seguridad/eficiencia             | ¿Manejo de memoria es seguro y eficiente?                                 | ✔️ |    |     |
+| 32 |                             | Liberación de recursos           | ¿Se liberan correctamente los recursos?                                   | ✔️ |    |     |
+| 33 |                             | Fugas                            | ¿Se previenen fugas de memoria?                                           | ✔️ |    |     |
+| 34 |                             | Rangos y límites                 | ¿Se validan rangos en estructuras de datos?                               | ✔️ |    |     |
+| 35 | Lógica y control de flujo   | Cálculos                         | ¿Los cálculos son precisos y seguros?                                     | ✔️ |    |     |
+| 36 |                             | Desbordamientos                  | ¿Se manejan casos de desbordamiento?                                      | ✔️ |    |     |
+| 37 |                             | División por cero                | ¿Se previene división por cero?                                           | ✔️ |    |     |
+| 38 |                             | Booleanas claras                 | ¿Expresiones booleanas claras y correctas?                                | ✔️ |    |     |
+| 39 |                             | Bucles                           | ¿Condiciones de terminación claras en bucles?                             | ✔️ |    |     |
+| 40 |                             | Recursión                        | ¿Se evita recursión infinita?                                             | ✔️ |    |     |
+| 41 |                             | Switch/case                      | ¿Se manejan todos los casos en estructuras de control?                    |    |    | ✔️  |
+| 42 |                             | Flujo lógico                     | ¿El flujo de control es claro y predecible?                               | ✔️ |    |     |
+| 43 |                             | Anidamiento                      | ¿Se evitan anidamientos excesivos?                                        | ✔️ |    |     |
+| 44 |                             | Complejidad ciclomática          | ¿Complejidad ciclomática dentro de límites aceptables?                    | ✔️ |    |     |
+| 45 |                             | Pre y postcondiciones            | ¿Verificadas en métodos críticos?                                         | ✔️ |    |     |
+| 46 | Manejo de errores           | Excepciones                      | ¿Se manejan apropiadamente las excepciones?                               | ✔️ |    |     |
+| 47 |                             | Mensajes de error                | ¿Los mensajes de error son informativos?                                  | ✔️ |    |     |
+| 48 |                             | Logging                          | ¿Estrategia de logging adecuada?                                          | ✔️ |    |     |
+| 49 |                             | Recuperación de errores          | ¿El sistema se recupera bien de errores?                                  | ✔️ |    |     |
+| 50 | Validación y verificación   | Entradas                         | ¿Se validan las entradas de usuario?                                      | ✔️ |    |     |
+| 51 |                             | Parámetros                       | ¿Se verifican parámetros de métodos?                                      | ✔️ |    |     |
+| 52 |                             | Casos límite                     | ¿Se manejan valores extremos, entradas vacías, etc.?                      | ✔️ |    |     |
+| 53 | Entrada/Salida y recursos   | Errores en E/S                   | ¿Se manejan errores y excepciones en E/S?                                 | ✔️ |    |     |
+| 54 |                             | Cierre de recursos               | ¿Recursos cerrados correctamente?                                         | ✔️ |    |     |
+| 55 |                             | Timeouts                         | ¿Timeouts en E/S para evitar bloqueos?                                    |    |    | ✔️  |
+| 56 |                             | Validación de datos externos     | ¿Se validan los datos leídos de fuentes externas?                         | ✔️ |    |     |
+| 57 | Archivos y buffers          | Tamaño de buffers                | ¿Tamaño de buffers adecuado?                                              |    |    | ✔️  |
+| 58 |                             | Archivos temporales únicos       | ¿Nombres únicos para evitar colisiones?                                   |    |    | ✔️  |
+| 59 |                             | EOF/EOL                          | ¿EOF/EOL manejados correctamente?                                         | ✔️ |    |     |
+| 60 | Pruebas y seguridad         | Cobertura                        | ¿Cobertura de pruebas adecuada?                                           |    | ✔️ |     |
+| 61 |                             | Pruebas unitarias                | ¿Se incluyen pruebas unitarias?                                           |    | ✔️ |     |
+| 62 |                             | Casos límite                     | ¿Se prueban casos límite?                                                 |    | ✔️ |     |
+| 63 |                             | Mantenibilidad                   | ¿Las pruebas son mantenibles?                                             |    | ✔️ |     |
+| 64 |                             | Independencia                    | ¿Las pruebas se pueden ejecutar en cualquier orden?                       |    | ✔️ |     |
+| 65 | Seguridad                   | Buenas prácticas                 | ¿Se siguen mejores prácticas (OWASP, CERT)?                               | ✔️ |    |     |
+| 66 |                             | Datos sensibles                  | ¿Datos sensibles protegidos (en tránsito/reposo)?                         | ✔️ |    |     |
+| 67 |                             | Vulnerabilidades comunes         | ¿Se previenen inyecciones, XSS, etc.?                                     | ✔️ |    |     |
+| 68 |                             | Autenticación segura             | ¿Mecanismos robustos de autenticación?                                    |    |    | ✔️  |
+| 69 |                             | Sanitización                     | ¿Entradas del usuario sanitizadas?                                        | ✔️ |    |     |
+| 70 | Preparación para producción | Limpieza de depuración           | ¿Se han eliminado códigos de depuración?                                  | ✔️ |    |     |
+| 71 |                             | Comentarios actualizados         | ¿Se han actualizado los comentarios?                                      | ✔️ |    |     |
+| 72 |                             | Advertencias                     | ¿Se han atendido advertencias del compilador?                             | ✔️ |    |     |
+| 73 | Documentación               | Código documentado               | ¿Documentación del código completa y actualizada?                         | ✔️ |    |     |
+| 74 |                             | Instrucciones de despliegue      | ¿Instrucciones claras para despliegue?                                    |    | ✔️ |     |
+| 75 |                             | Dependencias documentadas        | ¿Se documentan las dependencias y requisitos?                             | ✔️ |    |     |
+| 76 | Configuración               | Configuraciones por entorno      | ¿Configuración separada por entorno (dev, prod)?                          | ✔️ |    |     |
+| 77 |                             | Credenciales hardcoded           | ¿Sin credenciales hardcoded en el código?                                 | ✔️ |    |     |
 
 ---
+## Lista de Comprobación para un Recorrido sobre Código Recorrido #2
+El siguiente recorrido incluye estos archivos incluyen:
 
-### ✅ **Resumen para reporte de práctica**
+1. init.py - Inicialización de servicios
+2. init - Similar al anterior, posiblemente una versión alternativa
+3. mascota - Contiene funciones para gestionar mascotas
+4. mascota_service.py - Versión más completa del servicio de mascota
 
-En el módulo de servicios `mascota_service.py`, se han implementado correctamente los niveles de logging según las mejores prácticas para trazabilidad y tolerancia a fallos:
+# Evaluación de Código del Proyecto Funkelin
 
-* **DEBUG** aporta visibilidad detallada del flujo de ejecución y datos de entrada, clave para depuración.
-* **INFO** refleja acciones exitosas que son parte del flujo esperado del sistema.
-* **WARNING** destaca situaciones prevenibles por el usuario, como datos incorrectos o recursos inexistentes, sin afectar el servicio.
-* **ERROR** proporciona trazabilidad sobre errores críticos, incluyendo problemas con SQLAlchemy y validaciones fallidas.
+| # | Categoría | Subcategoría | Punto de verificación | Si | No | N/A |
+|---|---|---|---|---|---|---|
+| 1 | Diseño y arquitectura | Alineación con requerimientos | ¿El código implementa fielmente el diseño detallado y los requerimientos? | ✅ | | |
+| 2 | | | ¿Se respeta la arquitectura planificada (capas, modularización)? | ✅ | | |
+| 3 | | | ¿La estructura del proyecto es coherente y organizada? | ✅ | | |
+| 4 | | Principios de diseño | ¿Se respetan los principios SOLID/GRASP? | ✅ | | |
+| 5 | | | ¿Existe una clara separación de responsabilidades (lógica de negocio, interfaz gráfica, datos)? | ✅ | | |
+| 6 | | | ¿Las dependencias entre módulos están minimizadas? | ✅ | | |
+| 7 | | Patrones de diseño | ¿Se sigue un patrón de diseño adecuado para los problemas comunes? | ✅ | | |
+| 8 | | Modularidad y cohesión | ¿Cada clase tiene una única responsabilidad bien definida? | ✅ | | |
+| 9 | | | ¿El desglose de objetos/clases es lógico y refleja el dominio del problema? | ✅ | | |
+| 10 | | | ¿Los componentes son suficientemente reutilizables y desacoplados permitiendo la modificación o sustitución de uno sin afectar a otros? | ✅ | | |
+| 11 | | | ¿La transferencia de datos entre módulos es eficiente y segura (validación, serialización/deserialización adecuadas)? | ✅ | | |
+| 12 | Calidad del código | Claridad y mantenibilidad | ¿El código es auto explicativo y fácil de entender? | ✅ | | |
+| 13 | | | ¿Los nombres de variables, métodos y clases son descriptivos? | ✅ | | |
+| 14 | | | ¿Se siguen las convenciones de código establecidas? | ✅ | | |
+| 15 | | | ¿La indentación y formato son consistentes? | ✅ | | |
+| 16 | | | ¿Los comentarios son útiles sin ser redundantes? | ✅ | | |
+| 17 | | Eficiencia y rendimiento | ¿Los algoritmos utilizados son los más apropiados para el problema y el contexto? | ✅ | | |
+| 18 | | | ¿Se han identificado y optimizado los puntos críticos de rendimiento (cuello de botella)? | | ❌ | |
+| 19 | | | ¿Se hace un uso eficiente de los recursos del sistema (CPU, memoria, red, disco)? | ✅ | | |
+| 20 | | | ¿Se han considerado las implicaciones de escalabilidad del código (rendimiento bajo carga, manejo de concurrencia)? | ✅ | | |
+| 21 | | Reusabilidad | ¿El código está diseñado para ser reutilizable? | ✅ | | |
+| 22 | | | ¿Se aprovecha adecuadamente el código existente? | ✅ | | |
+| 23 | | | ¿Existe duplicación que podría ser refactorizada? | | ❌ | |
+| 24 | | | ¿Se evitan bloques de código comentados o "dead code"? | ✅ | | |
+| 25 | Gestión de variables y memoria | Variables y tipos | ¿Las variables se inicializan apropiadamente? | ✅ | | |
+| 26 | | | ¿Los tipos de datos elegidos para las variables son los más apropiados para su propósito y rango de valores? | ✅ | | |
+| 27 | | | ¿Todas las variables se declaran con el ámbito más pequeño posible (principio de mínimo alcance)? | ✅ | | |
+| 28 | | | ¿Se utilizan estructuras de datos óptimas para el caso de uso? | ✅ | | |
+| 29 | | | ¿Las constantes están bien definidas? | ✅ | | |
+| 30 | | | ¿Se manejan correctamente las conversiones de tipos? | ✅ | | |
+| 31 | | Gestión de memoria | ¿El manejo de memoria es seguro y eficiente? | ✅ | | |
+| 32 | | | ¿Se liberan correctamente los recursos? | ✅ | | |
+| 33 | | | ¿Se previenen las fugas de memoria? | ✅ | | |
+| 34 | | | ¿Se validan los rangos y límites en arreglos, listas, colecciones y otras estructuras de datos para evitar errores de acceso fuera de límites? | ✅ | | |
+| 35 | Lógica y control de flujo | Operaciones y cálculos | ¿Los cálculos son precisos y seguros? | | | ✓ |
+| 36 | | | ¿Se manejan casos de desbordamiento? | | | ✓ |
+| 37 | | | ¿Se previene la división por cero y otras operaciones matemáticas inválidas? | | | ✓ |
+| 38 | | | ¿Las expresiones booleanas son claras y correctas (evitando negaciones complejas o dobles negaciones)? | ✅ | | |
+| 39 | | Estructuras de control | ¿Los bucles tienen condiciones de terminación claras para evitar ciclos infinitos? | | | ✓ |
+| 40 | | | ¿Se evita la recursión infinita o sin límite de profundidad? | | | ✓ |
+| 41 | | | ¿Se manejan todos los casos en estructuras switch/case? | | | ✓ |
+| 42 | | | ¿El flujo de control es lógico, fácil de seguir y predecible, evitando saltos innecesarios o código "espagueti"? | ✅ | | |
+| 43 | | | ¿Se evitan anidamientos excesivos? | ✅ | | |
+| 44 | | | ¿La complejidad ciclomática está dentro de límites aceptables (ej. < 10 por método)? | ✅ | | |
+| 45 | | | ¿Se verifican las precondiciones y postcondiciones en métodos críticos? | ✅ | | |
+| 46 | Manejo de errores y robustez | Gestión de excepciones | ¿Se manejan apropiadamente todas las excepciones posibles? | ✅ | | |
+| 47 | | | ¿Los mensajes de error son informativos? | ✅ | | |
+| 48 | | | ¿Se implementa una estrategia de registro de eventos (logging) adecuada? | ✅ | | |
+| 49 | | | ¿El sistema se recupera adecuadamente de los errores? | ✅ | | |
+| 50 | | Validación y verificación | ¿Se validan las entradas de usuario? | ✅ | | |
+| 51 | | | ¿Se verifican los parámetros de los métodos? | ✅ | | |
+| 52 | | | ¿Se manejan los casos límite (valores extremos, entradas vacías, condiciones excepcionales)? | ✅ | | |
+| 53 | Entrada/Salida y recursos | Gestión de recursos | ¿Las operaciones de E/S son seguras manejando posibles errores y excepciones? | ✅ | | |
+| 54 | | | ¿Se cierran correctamente los recursos (archivos, conexiones, buffers)? | ✅ | | |
+| 55 | | | ¿Se manejan los timeouts apropiadamente en operaciones de E/S para evitar bloqueos indefinidos? | ✅ | | |
+| 56 | | | ¿Se validan los datos leídos de fuentes externas (archivos, red, etc.) antes de usarlos para prevenir corrupción de datos o vulnerabilidades? | ✅ | | |
+| 57 | | Archivos y buffers | ¿Los buffers son del tamaño adecuado? | | | ✓ |
+| 58 | | | ¿Los nombres de archivos temporales son únicos para evitar colisiones o accesos no autorizados? | | | ✓ |
+| 59 | | | ¿Se manejan correctamente las condiciones de fin de archivo (EOF) y fin de línea (EOL) para evitar errores? | | | ✓ |
+| 60 | Pruebas y seguridad | Pruebas | ¿Existe cobertura de pruebas adecuada? | | ❌ | |
+| 61 | | | ¿Se incluyen pruebas unitarias? | | ❌ | |
+| 62 | | | ¿Se prueban los casos límite? | | ❌ | |
+| 63 | | | ¿Las pruebas son mantenibles? | | ❌ | |
+| 64 | | | ¿Las pruebas son independientes y ejecutables en cualquier orden? | | ❌ | |
+| 65 | | Seguridad | ¿Se siguen las mejores prácticas de seguridad en la codificación (OWASP, CERT, etc.)? | ✅ | | |
+| 66 | | | ¿Se protegen los datos sensibles (contraseñas, claves API, datos personales, información financiera) con cifrado robusto, tanto en reposo como en tránsito? | | | ✓ |
+| 67 | | | ¿Se previenen vulnerabilidades comunes de seguridad (inyección SQL, XSS, CSRF, OWASP Top 10)? | ✅ | | |
+| 68 | | | ¿Se implementan mecanismos de autenticación robustos y seguros (autenticación multifactorial cuando sea apropiado, evitar autenticación básica insegura)? | | | ✓ |
+| 69 | | | ¿Se valida y sanitiza la entrada del usuario para prevenir inyección de código o manipulación maliciosa de datos? | ✅ | | |
+| 70 | Preparación para producción | Limpieza final | ¿Se han eliminado códigos de depuración? | | ❌ | |
+| 71 | | | ¿Se han actualizado los comentarios? | ✅ | | |
+| 72 | | | ¿Se han atendido todas las advertencias del compilador? | | ❌ | |
+| 73 | | Documentación | ¿La documentación del código (comentarios, Javadoc, etc.) está completa, actualizada y es comprensible? | ✅ | | |
+| 74 | | | ¿Existen instrucciones de despliegue claras y detalladas para el personal de operaciones o despliegue? | | ❌ | |
+| 75 | | | ¿Se documentan las dependencias y requisitos? | | ❌ | |
+| 76 | | Configuración | ¿Se gestionan las configuraciones por entorno (dev, prod)? | | ❌ | |
+| 77 | | | ¿Las credenciales y claves no están codificadas en duro (hardcoded) en el código? | ✅ | | |
 
-Además, el uso de la librería `retrying` para operaciones con base de datos mejora la **resiliencia del sistema ante fallos transitorios**, y se combina adecuadamente con la gestión de logs para documentar cualquier fallo crítico.
+# Evaluación del Código del Proyecto Funkelin Recorrido #3
 
----
+Análisis de los archivos
+1. init.py
+   Este archivo configura el logging para la auditoría de importación de rutas y registra los blueprints disponibles. Está bien estructurado, con manejo de errores durante la importación.
+2. init
+   Este archivo configura los blueprints para la aplicación Flask, incluyendo un método para registrar todos los blueprints en la aplicación. Tiene manejo de errores apropiado y logging configurado correctamente.
+3. mascotas
+   Este archivo define rutas para una API REST de mascotas, con validaciones de entrada, sanitización y manejo de errores. Sin embargo, hay inconsistencias en el manejo de parámetros ("especie" vs "tipo").
+4. mascotas.py
+   Es similar al archivo "mascotas", pero incluye una función adicional para eliminar mascotas y una función específica para sanitizar texto. También tiene inconsistencias con el uso de "tipo" vs "especie".
+
+| # | Categoría | Subcategoría | Punto de verificación | Si | No | N/A |
+|------|-------------|---------------|----------------------|----|----|-----|
+| 1 | Diseño y arquitectura | Alineación con requerimientos | ¿El código implementa fielmente el diseño detallado y los requerimientos? | ✓ | | |
+| 2 | | | ¿Se respeta la arquitectura planificada (capas, modularización)? | ✓ | | |
+| 3 | | | ¿La estructura del proyecto es coherente y organizada? | ✓ | | |
+| 4 | | Principios de diseño | ¿Se respetan los principios SOLID/GRASP? | | ✓ | |
+| 5 | | | ¿Existe una clara separación de responsabilidades (lógica de negocio, interfaz gráfica, datos)? | ✓ | | |
+| 6 | | | ¿Las dependencias entre módulos están minimizadas? | ✓ | | |
+| 7 | | Patrones de diseño | ¿Se sigue un patrón de diseño adecuado para los problemas comunes? | ✓ | | |
+| 8 | | Modularidad y cohesión | ¿Cada clase tiene una única responsabilidad bien definida? | ✓ | | |
+| 9 | | | ¿El desglose de objetos/clases es lógico y refleja el dominio del problema? | ✓ | | |
+| 10 | | | ¿Los componentes son suficientemente reutilizables y desacoplados permitiendo la modificación o sustitución de uno sin afectar a otros? | ✓ | | |
+| 11 | | | ¿La transferencia de datos entre módulos es eficiente y segura (validación, serialización/deserialización adecuadas)? | ✓ | | |
+| 12 | Calidad del código | Claridad y mantenibilidad | ¿El código es auto explicativo y fácil de entender? | ✓ | | |
+| 13 | | | ¿Los nombres de variables, métodos y clases son descriptivos? | ✓ | | |
+| 14 | | | ¿Se siguen las convenciones de código establecidas? | | ✓ | |
+| 15 | | | ¿La indentación y formato son consistentes? | ✓ | | |
+| 16 | | | ¿Los comentarios son útiles sin ser redundantes? | ✓ | | |
+| 17 | | Eficiencia y rendimiento | ¿Los algoritmos utilizados son los más apropiados para el problema y el contexto? | ✓ | | |
+| 18 | | | ¿Se han identificado y optimizado los puntos críticos de rendimiento (cuello de botella)? | | ✓ | |
+| 19 | | | ¿Se hace un uso eficiente de los recursos del sistema (CPU, memoria, red, disco)? | ✓ | | |
+| 20 | | | ¿Se han considerado las implicaciones de escalabilidad del código (rendimiento bajo carga, manejo de concurrencia)? | | ✓ | |
+| 21 | | Reusabilidad | ¿El código está diseñado para ser reutilizable? | ✓ | | |
+| 22 | | | ¿Se aprovecha adecuadamente el código existente? | ✓ | | |
+| 23 | | | ¿Existe duplicación que podría ser refactorizada? | | ✓ | |
+| 24 | | | ¿Se evitan bloques de código comentados o "dead code"? | ✓ | | |
+| 25 | Gestión de variables y memoria | Variables y tipos | ¿Las variables se inicializan apropiadamente? | ✓ | | |
+| 26 | | | ¿Los tipos de datos elegidos para las variables son los más apropiados para su propósito y rango de valores? | ✓ | | |
+| 27 | | | ¿Todas las variables se declaran con el ámbito más pequeño posible (principio de mínimo alcance)? | ✓ | | |
+| 28 | | | ¿Se utilizan estructuras de datos óptimas para el caso de uso? | ✓ | | |
+| 29 | | | ¿Las constantes están bien definidas? | | ✓ | |
+| 30 | | | ¿Se manejan correctamente las conversiones de tipos? | ✓ | | |
+| 31 | | Gestión de memoria | ¿El manejo de memoria es seguro y eficiente? | ✓ | | |
+| 32 | | | ¿Se liberan correctamente los recursos? | ✓ | | |
+| 33 | | | ¿Se previenen las fugas de memoria? | ✓ | | |
+| 34 | | | ¿Se validan los rangos y límites en arreglos, listas, colecciones y otras estructuras de datos para evitar errores de acceso fuera de límites? | ✓ | | |
+| 35 | Lógica y control de flujo | Operaciones y cálculos | ¿Los cálculos son precisos y seguros? | ✓ | | |
+| 36 | | | ¿Se manejan casos de desbordamiento? | | | ✓ |
+| 37 | | | ¿Se previene la división por cero y otras operaciones matemáticas inválidas? | | | ✓ |
+| 38 | | | ¿Las expresiones booleanas son claras y correctas (evitando negaciones complejas o dobles negaciones)? | ✓ | | |
+| 39 | | Estructuras de control | ¿Los bucles tienen condiciones de terminación claras para evitar ciclos infinitos? | | | ✓ |
+| 40 | | | ¿Se evita la recursión infinita o sin límite de profundidad? | | | ✓ |
+| 41 | | | ¿Se manejan todos los casos en estructuras switch/case? | | | ✓ |
+| 42 | | | ¿El flujo de control es lógico, fácil de seguir y predecible, evitando saltos innecesarios o código "espagueti"? | ✓ | | |
+| 43 | | | ¿Se evitan anidamientos excesivos? | ✓ | | |
+| 44 | | | ¿La complejidad ciclomática está dentro de límites aceptables (ej. < 10 por método)? | ✓ | | |
+| 45 | | | ¿Se verifican las precondiciones y postcondiciones en métodos críticos? | ✓ | | |
+| 46 | Manejo de errores y robustez | Gestión de excepciones | ¿Se manejan apropiadamente todas las excepciones posibles? | ✓ | | |
+| 47 | | | ¿Los mensajes de error son informativos? | ✓ | | |
+| 48 | | | ¿Se implementa una estrategia de registro de eventos (logging) adecuada? | ✓ | | |
+| 49 | | | ¿El sistema se recupera adecuadamente de los errores? | ✓ | | |
+| 50 | | Validación y verificación | ¿Se validan las entradas de usuario? | ✓ | | |
+| 51 | | | ¿Se verifican los parámetros de los métodos? | ✓ | | |
+| 52 | | | ¿Se manejan los casos límite (valores extremos, entradas vacías, condiciones excepcionales)? | ✓ | | |
+| 53 | Entrada/Salida y recursos | Gestión de recursos | ¿Las operaciones de E/S son seguras manejando posibles errores y excepciones? | ✓ | | |
+| 54 | | | ¿Se cierran correctamente los recursos (archivos, conexiones, buffers)? | | | ✓ |
+| 55 | | | ¿Se manejan los timeouts apropiadamente en operaciones de E/S para evitar bloqueos indefinidos? | | ✓ | |
+| 56 | | | ¿Se validan los datos leídos de fuentes externas (archivos, red, etc.) antes de usarlos para prevenir corrupción de datos o vulnerabilidades? | ✓ | | |
+| 57 | | Archivos y buffers | ¿Los buffers son del tamaño adecuado? | | | ✓ |
+| 58 | | | ¿Los nombres de archivos temporales son únicos para evitar colisiones o accesos no autorizados? | | | ✓ |
+| 59 | | | ¿Se manejan correctamente las condiciones de fin de archivo (EOF) y fin de línea (EOL) para evitar errores? | | | ✓ |
+| 60 | Pruebas y seguridad | Pruebas | ¿Existe cobertura de pruebas adecuada? | | ✓ | |
+| 61 | | | ¿Se incluyen pruebas unitarias? | | ✓ | |
+| 62 | | | ¿Se prueban los casos límite? | | ✓ | |
+| 63 | | | ¿Las pruebas son mantenibles? | | ✓ | |
+| 64 | | | ¿Las pruebas son independientes y ejecutables en cualquier orden? | | ✓ | |
+| 65 | | Seguridad | ¿Se siguen las mejores prácticas de seguridad en la codificación (OWASP, CERT, etc.)? | ✓ | | |
+| 66 | | | ¿Se protegen los datos sensibles (contraseñas, claves API, datos personales, información financiera) con cifrado robusto, tanto en reposo como en tránsito? | | ✓ | |
+| 67 | | | ¿Se previenen vulnerabilidades comunes de seguridad (inyección SQL, XSS, CSRF, OWASP Top 10)? | ✓ | | |
+| 68 | | | ¿Se implementan mecanismos de autenticación robustos y seguros (autenticación multifactorial cuando sea apropiado, evitar autenticación básica insegura)? | | ✓ | |
+| 69 | | | ¿Se valida y sanitiza la entrada del usuario para prevenir inyección de código o manipulación maliciosa de datos? | ✓ | | |
+| 70 | Preparación para producción | Limpieza final | ¿Se han eliminado códigos de depuración? | | ✓ | |
+| 71 | | | ¿Se han actualizado los comentarios? | ✓ | | |
+| 72 | | | ¿Se han atendido todas las advertencias del compilador? | | ✓ | |
+| 73 | | Documentación | ¿La documentación del código (comentarios, Javadoc, etc.) está completa, actualizada y es comprensible? | ✓ | | |
+| 74 | | | ¿Existen instrucciones de despliegue claras y detalladas para el personal de operaciones o despliegue? | | ✓ | |
+| 75 | | | ¿Se documentan las dependencias y requisitos? | | ✓ | |
+| 76 | | Configuración | ¿Se gestionan las configuraciones por entorno (dev, prod)? | | ✓ | |
+| 77 | | | ¿Las credenciales y claves no están codificadas en duro (hardcoded) en el código? | ✓ | | |
+
+# Evaluación del Código del Proyecto Funkelin Recorrido #4
+
+Análisis de los archivos: 
+1. __init__.py - Archivo de inicialización principal
+2. init - Archivo de inicialización del módulo de modelos (parece tener problemas de formato)
+3. mascota - Primera versión del modelo Mascota
+4. mascota.py - Versión actualizada del modelo Mascota
+
+# Evaluación de Código Funkelin - Checklist
+
+**Id módulo**: Funkelin Backend 4            
+
+| # | Categoría | Subcategoría | Punto de verificación | Sí | No | N/A |
+|---|-----------|--------------|------------------------|-----|-----|-----|
+| **Diseño y arquitectura** |
+| 1 | Alineación con requerimientos | ¿El código implementa fielmente el diseño detallado y los requerimientos? | ✓ | | |
+| 2 | | ¿Se respeta la arquitectura planificada (capas, modularización)? | ✓ | | |
+| 3 | | ¿La estructura del proyecto es coherente y organizada? | ✓ | | |
+| 4 | Principios de diseño | ¿Se respetan los principios SOLID/GRASP? | ✓ | | |
+| 5 | | ¿Existe una clara separación de responsabilidades (lógica de negocio, interfaz gráfica, datos)? | ✓ | | |
+| 6 | | ¿Las dependencias entre módulos están minimizadas? | | ✓ | |
+| 7 | Patrones de diseño | ¿Se sigue un patrón de diseño adecuado para los problemas comunes? | ✓ | | |
+| 8 | Modularidad y cohesión | ¿Cada clase tiene una única responsabilidad bien definida? | ✓ | | |
+| 9 | | ¿El desglose de objetos/clases es lógico y refleja el dominio del problema? | ✓ | | |
+| 10 | | ¿Los componentes son suficientemente reutilizables y desacoplados permitiendo la modificación o sustitución de uno sin afectar a otros? | | ✓ | |
+| 11 | | ¿La transferencia de datos entre módulos es eficiente y segura (validación, serialización/deserialización adecuadas)? | ✓ | | |
+| **Calidad del código** |
+| 12 | Claridad y mantenibilidad | ¿El código es auto explicativo y fácil de entender? | ✓ | | |
+| 13 | | ¿Los nombres de variables, métodos y clases son descriptivos? | ✓ | | |
+| 14 | | ¿Se siguen las convenciones de código establecidas? | ✓ | | |
+| 15 | | ¿La indentación y formato son consistentes? | | ✓ | |
+| 16 | | ¿Los comentarios son útiles sin ser redundantes? | | ✓ | |
+| 17 | Eficiencia y rendimiento | ¿Los algoritmos utilizados son los más apropiados para el problema y el contexto? | ✓ | | |
+| 18 | | ¿Se han identificado y optimizado los puntos críticos de rendimiento (cuello de botella)? | | | ✓ |
+| 19 | | ¿Se hace un uso eficiente de los recursos del sistema (CPU, memoria, red, disco)? | ✓ | | |
+| 20 | | ¿Se han considerado las implicaciones de escalabilidad del código (rendimiento bajo carga, manejo de concurrencia)? | | ✓ | |
+| 21 | Reusabilidad | ¿El código está diseñado para ser reutilizable? | ✓ | | |
+| 22 | | ¿Se aprovecha adecuadamente el código existente? | ✓ | | |
+| 23 | | ¿Existe duplicación que podría ser refactorizada? | | ✓ | |
+| 24 | | ¿Se evitan bloques de código comentados o "dead code"? | ✓ | | |
+| **Gestión de variables y memoria** |
+| 25 | Variables y tipos | ¿Las variables se inicializan apropiadamente? | ✓ | | |
+| 26 | | ¿Los tipos de datos elegidos para las variables son los más apropiados para su propósito y rango de valores? | ✓ | | |
+| 27 | | ¿Todas las variables se declaran con el ámbito más pequeño posible (principio de mínimo alcance)? | ✓ | | |
+| 28 | | ¿Se utilizan estructuras de datos óptimas para el caso de uso? | ✓ | | |
+| 29 | | ¿Las constantes están bien definidas? | | ✓ | |
+| 30 | | ¿Se manejan correctamente las conversiones de tipos? | ✓ | | |
+| 31 | Gestión de memoria | ¿El manejo de memoria es seguro y eficiente? | ✓ | | |
+| 32 | | ¿Se liberan correctamente los recursos? | | | ✓ |
+| 33 | | ¿Se previenen las fugas de memoria? | | | ✓ |
+| 34 | | ¿Se validan los rangos y límites en arreglos, listas, colecciones y otras estructuras de datos para evitar errores de acceso fuera de límites? | | | ✓ |
+| **Lógica y control de flujo** |
+| 35 | Operaciones y cálculos | ¿Los cálculos son precisos y seguros? | | | ✓ |
+| 36 | | ¿Se manejan casos de desbordamiento? | | | ✓ |
+| 37 | | ¿Se previene la división por cero y otras operaciones matemáticas inválidas? | | | ✓ |
+| 38 | | ¿Las expresiones booleanas son claras y correctas (evitando negaciones complejas o dobles negaciones)? | ✓ | | |
+| 39 | Estructuras de control | ¿Los bucles tienen condiciones de terminación claras para evitar ciclos infinitos? | | | ✓ |
+| 40 | | ¿Se evita la recursión infinita o sin límite de profundidad? | | | ✓ |
+| 41 | | ¿Se manejan todos los casos en estructuras switch/case? | | | ✓ |
+| 42 | | ¿El flujo de control es lógico, fácil de seguir y predecible, evitando saltos innecesarios o código "espagueti"? | ✓ | | |
+| 43 | | ¿Se evitan anidamientos excesivos? | ✓ | | |
+| 44 | | ¿La complejidad ciclomática está dentro de límites aceptables (ej. < 10 por método)? | ✓ | | |
+| 45 | | ¿Se verifican las precondiciones y postcondiciones en métodos críticos? | ✓ | | |
+| **Manejo de errores y robustez** |
+| 46 | Gestión de excepciones | ¿Se manejan apropiadamente todas las excepciones posibles? | ✓ | | |
+| 47 | | ¿Los mensajes de error son informativos? | ✓ | | |
+| 48 | | ¿Se implementa una estrategia de registro de eventos (logging) adecuada? | ✓ | | |
+| 49 | | ¿El sistema se recupera adecuadamente de los errores? | ✓ | | |
+| 50 | Validación y verificación | ¿Se validan las entradas de usuario? | ✓ | | |
+| 51 | | ¿Se verifican los parámetros de los métodos? | ✓ | | |
+| 52 | | ¿Se manejan los casos límite (valores extremos, entradas vacías, condiciones excepcionales)? | ✓ | | |
+| **Entrada/Salida y recursos** |
+| 53 | Gestión de recursos | ¿Las operaciones de E/S son seguras manejando posibles errores y excepciones? | ✓ | | |
+| 54 | | ¿Se cierran correctamente los recursos (archivos, conexiones, buffers)? | | | ✓ |
+| 55 | | ¿Se manejan los timeouts apropiadamente en operaciones de E/S para evitar bloqueos indefinidos? | | | ✓ |
+| 56 | | ¿Se validan los datos leídos de fuentes externas (archivos, red, etc.) antes de usarlos para prevenir corrupción de datos o vulnerabilidades? | | | ✓ |
+| 57 | Archivos y buffers | ¿Los buffers son del tamaño adecuado? | | | ✓ |
+| 58 | | ¿Los nombres de archivos temporales son únicos para evitar colisiones o accesos no autorizados? | | | ✓ |
+| 59 | | ¿Se manejan correctamente las condiciones de fin de archivo (EOF) y fin de línea (EOL) para evitar errores? | | | ✓ |
+| **Pruebas y seguridad** |
+| 60 | Pruebas | ¿Existe cobertura de pruebas adecuada? | | ✓ | |
+| 61 | | ¿Se incluyen pruebas unitarias? | | ✓ | |
+| 62 | | ¿Se prueban los casos límite? | | ✓ | |
+| 63 | | ¿Las pruebas son mantenibles? | | | ✓ |
+| 64 | | ¿Las pruebas son independientes y ejecutables en cualquier orden? | | | ✓ |
+| 65 | Seguridad | ¿Se siguen las mejores prácticas de seguridad en la codificación (OWASP, CERT, etc.)? | ✓ | | |
+| 66 | | ¿Se protegen los datos sensibles (contraseñas, claves API, datos personales, información financiera) con cifrado robusto, tanto en reposo como en tránsito? | | | ✓ |
+| 67 | | ¿Se previenen vulnerabilidades comunes de seguridad (inyección SQL, XSS, CSRF, OWASP Top 10)? | ✓ | | |
+| 68 | | ¿Se implementan mecanismos de autenticación robustos y seguros (autenticación multifactorial cuando sea apropiado, evitar autenticación básica insegura)? | | | ✓ |
+| 69 | | ¿Se valida y sanitiza la entrada del usuario para prevenir inyección de código o manipulación maliciosa de datos? | ✓ | | |
+| **Preparación para producción** |
+| 70 | Limpieza final | ¿Se han eliminado códigos de depuración? | | ✓ | |
+| 71 | | ¿Se han actualizado los comentarios? | ✓ | | |
+| 72 | | ¿Se han atendido todas las advertencias del compilador? | | | ✓ |
+| 73 | Documentación | ¿La documentación del código (comentarios, Javadoc, etc.) está completa, actualizada y es comprensible? | ✓ | | |
+| 74 | | ¿Existen instrucciones de despliegue claras y detalladas para el personal de operaciones o despliegue? | | ✓ | |
+| 75 | | ¿Se documentan las dependencias y requisitos? | | ✓ | |
+| 76 | Configuración | ¿Se gestionan las configuraciones por entorno (dev, prod)? | | ✓ | |
+| 77 | | ¿Las credenciales y claves no están codificadas en duro (hardcoded) en el código? | ✓ | | |
+
+# Evaluación del Código del Proyecto Funkelin Recorrido #5
+
+Análisis de los archivos:
+1. styles.css - Estilos CSS para la aplicación
+2. script.js - Función para recuperar mascotas desde la API
+3. script - Similar a script.js pero con pequeñas diferencias
+4. app.js - Archivo principal de la aplicación JavaScript
+
+# Evaluación de Código - Proyecto de Mascotas
+
+Id módulo: Frontend        Num de recorrido: 5
+
+
+| # | Categoría | Subcategoría | Punto de verificación | Sí | No | N/A | Observaciones |
+|---|-----------|--------------|----------------------|-----|-----|-----|--------------|
+| 1 | Diseño y arquitectura | Alineación con requerimientos | ¿El código implementa fielmente el diseño detallado y los requerimientos? | ✓ |  |  | El código implementa una aplicación de gestión de mascotas con CRUD básico |
+| 2 |  |  | ¿Se respeta la arquitectura planificada (capas, modularización)? |  | ✗ |  | Hay duplicación entre scripts.js, script y js.app con funcionalidades similares |
+| 3 |  |  | ¿La estructura del proyecto es coherente y organizada? |  | ✗ |  | Hay duplicación de funcionalidades y confusión en la organización de archivos |
+| 4 |  | Principios de diseño | ¿Se respetan los principios SOLID/GRASP? | ✓ |  |  | Separación de presentación y lógica de negocio, aunque con duplicidad |
+| 5 |  |  | ¿Existe una clara separación de responsabilidades? | ✓ |  |  | CSS separado del JS, aunque falta consistencia en la organización |
+| 6 |  |  | ¿Las dependencias entre módulos están minimizadas? |  | ✗ |  | Hay duplicación de código entre diferentes archivos JS |
+| 7 |  | Patrones de diseño | ¿Se sigue un patrón de diseño adecuado para los problemas comunes? | ✓ |  |  | Se utiliza un patrón MVC simplificado |
+| 8 |  | Modularidad y cohesión | ¿Cada clase tiene una única responsabilidad bien definida? | ✓ |  |  | Las funciones tienen propósitos bien definidos |
+| 9 |  |  | ¿El desglose de objetos/clases es lógico y refleja el dominio del problema? | ✓ |  |  | Refleja el dominio de gestión de mascotas |
+| 10 |  |  | ¿Los componentes son suficientemente reutilizables y desacoplados? |  | ✗ |  | Hay duplicación entre archivos que debería consolidarse |
+| 11 |  |  | ¿La transferencia de datos entre módulos es eficiente y segura? | ✓ |  |  | Hay validaciones tanto en entrada como en salida |
+| 12 | Calidad del código | Claridad y mantenibilidad | ¿El código es auto explicativo y fácil de entender? | ✓ |  |  | Buen uso de comentarios con emojis y mensajes claros |
+| 13 |  |  | ¿Los nombres de variables, métodos y clases son descriptivos? | ✓ |  |  | Nombres como fetchMascotas, agregarMascotaDOM son claros |
+| 14 |  |  | ¿Se siguen las convenciones de código establecidas? | ✓ |  |  | Convenciones consistentes dentro de cada archivo |
+| 15 |  |  | ¿La indentación y formato son consistentes? | ✓ |  |  | Formato consistente en todos los archivos |
+| 16 |  |  | ¿Los comentarios son útiles sin ser redundantes? | ✓ |  |  | Comentarios útiles con emojis para claridad visual |
+| 17 |  | Eficiencia y rendimiento | ¿Los algoritmos utilizados son los más apropiados? | ✓ |  |  | Operaciones CRUD directas sin complejidad innecesaria |
+| 18 |  |  | ¿Se han identificado y optimizado los puntos críticos de rendimiento? | ✓ |  |  | Timeout en script.js para evitar bloqueos en solicitudes |
+| 19 |  |  | ¿Se hace un uso eficiente de los recursos del sistema? | ✓ |  |  | Uso de fetch con validaciones y manejo de errores |
+| 20 |  |  | ¿Se han considerado las implicaciones de escalabilidad del código? |  | ✗ |  | No hay manejo avanzado de concurrencia o escalabilidad |
+| 21 |  | Reusabilidad | ¿El código está diseñado para ser reutilizable? | ✓ |  |  | Funciones como sanitizarTexto son reutilizables |
+| 22 |  |  | ¿Se aprovecha adecuadamente el código existente? |  | ✗ |  | Hay duplicación entre archivos en lugar de reutilización |
+| 23 |  |  | ¿Existe duplicación que podría ser refactorizada? |  | ✗ |  | Hay duplicación significativa de fetchMascotas entre archivos |
+| 24 |  |  | ¿Se evitan bloques de código comentados o "dead code"? | ✓ |  |  | No se observan bloques de código comentados |
+| 25 | Gestión de variables y memoria | Variables y tipos | ¿Las variables se inicializan apropiadamente? | ✓ |  |  | Las variables se inicializan adecuadamente |
+| 26 |  |  | ¿Los tipos de datos elegidos son los más apropiados? | ✓ |  |  | Uso correcto de tipos de datos |
+| 27 |  |  | ¿Todas las variables se declaran con el ámbito más pequeño posible? | ✓ |  |  | Variables con alcance local donde corresponde |
+| 28 |  |  | ¿Se utilizan estructuras de datos óptimas para el caso de uso? | ✓ |  |  | Arrays y objetos utilizados adecuadamente |
+| 29 |  |  | ¿Las constantes están bien definidas? | ✓ |  |  | Uso de const para referencias DOM y constantes |
+| 30 |  |  | ¿Se manejan correctamente las conversiones de tipos? | ✓ |  |  | parseInt con validación para edad |
+| 31 |  | Gestión de memoria | ¿El manejo de memoria es seguro y eficiente? | ✓ |  |  | No hay acumulación de objetos en memoria |
+| 32 |  |  | ¿Se liberan correctamente los recursos? | ✓ |  |  | clearTimeout para limpiar timeouts en script.js |
+| 33 |  |  | ¿Se previenen las fugas de memoria? | ✓ |  |  | No hay listeners sin remover o referencias circulares |
+| 34 |  |  | ¿Se validan los rangos y límites en arreglos y estructuras? | ✓ |  |  | Validación de mascotas recibidas antes de acceder a propiedades |
+| 35 | Lógica y control de flujo | Operaciones y cálculos | ¿Los cálculos son precisos y seguros? | ✓ |  |  | No hay cálculos complejos |
+| 36 |  |  | ¿Se manejan casos de desbordamiento? |  |  | ✓ | No aplica para esta aplicación |
+| 37 |  |  | ¿Se previene la división por cero y operaciones inválidas? |  |  | ✓ | No aplica para esta aplicación |
+| 38 |  |  | ¿Las expresiones booleanas son claras y correctas? | ✓ |  |  | Validaciones claras como !nombre ||  nombre.length < 2 |
+| 39 |  | Estructuras de control | ¿Los bucles tienen condiciones de terminación claras? |  |  | ✓ | No hay bucles complejos |
+| 40 |  |  | ¿Se evita la recursión infinita o sin límite de profundidad? |  |  | ✓ | No hay funciones recursivas |
+| 41 |  |  | ¿Se manejan todos los casos en estructuras switch/case? |  |  | ✓ | No hay switch/case en el código |
+| 42 |  |  | ¿El flujo de control es lógico y fácil de seguir? | ✓ |  |  | Flujo lineal con manejo de errores |
+| 43 |  |  | ¿Se evitan anidamientos excesivos? | ✓ |  |  | No hay anidamientos profundos |
+| 44 |  |  | ¿La complejidad ciclomática está dentro de límites aceptables? | ✓ |  |  | Funciones simples sin excesivas ramas |
+| 45 |  |  | ¿Se verifican las precondiciones y postcondiciones? | ✓ |  |  | Validaciones de entrada y salida en funciones |
+| 46 | Manejo de errores y robustez | Gestión de excepciones | ¿Se manejan apropiadamente todas las excepciones posibles? | ✓ |  |  | Try/catch en todas las operaciones asíncronas |
+| 47 |  |  | ¿Los mensajes de error son informativos? | ✓ |  |  | Mensajes con prefijo ⚠ y detalles |
+| 48 |  |  | ¿Se implementa una estrategia de registro de eventos adecuada? | ✓ |  |  | console.debug, info, warn y error usados adecuadamente |
+| 49 |  |  | ¿El sistema se recupera adecuadamente de los errores? | ✓ |  |  | Manejo de errores con respuestas vacías o mensajes |
+| 50 |  | Validación y verificación | ¿Se validan las entradas de usuario? | ✓ |  |  | sanitizarTexto y validación de tipos |
+| 51 |  |  | ¿Se verifican los parámetros de los métodos? | ✓ |  |  | Verificación de id en eliminarMascota |
+| 52 |  |  | ¿Se manejan los casos límite? | ✓ |  |  | Validación de datos vacíos y tipos incorrectos |
+| 53 | Entrada/Salida y recursos | Gestión de recursos | ¿Las operaciones de E/S son seguras? | ✓ |  |  | Operaciones fetch con try/catch |
+| 54 |  |  | ¿Se cierran correctamente los recursos? | ✓ |  |  | No hay recursos abiertos sin cerrar |
+| 55 |  |  | ¿Se manejan los timeouts apropiadamente? | ✓ |  |  | TIMEOUT_MS de 5000ms en script.js |
+| 56 |  |  | ¿Se validan los datos leídos de fuentes externas? | ✓ |  |  | Validación de respuestas JSON |
+| 57 |  | Archivos y buffers | ¿Los buffers son del tamaño adecuado? |  |  | ✓ | No aplica para esta aplicación |
+| 58 |  |  | ¿Los nombres de archivos temporales son únicos? |  |  | ✓ | No aplica para esta aplicación |
+| 59 |  |  | ¿Se manejan correctamente las condiciones de fin de archivo? |  |  | ✓ | No aplica para esta aplicación |
+| 60 | Pruebas y seguridad | Pruebas | ¿Existe cobertura de pruebas adecuada? |  | ✗ |  | No se observan pruebas automatizadas |
+| 61 |  |  | ¿Se incluyen pruebas unitarias? |  | ✗ |  | No hay pruebas unitarias |
+| 62 |  |  | ¿Se prueban los casos límite? |  | ✗ |  | No hay pruebas de casos límite |
+| 63 |  |  | ¿Las pruebas son mantenibles? |  |  | ✓ | No hay pruebas para evaluar |
+| 64 |  |  | ¿Las pruebas son independientes y ejecutables en cualquier orden? |  |  | ✓ | No hay pruebas para evaluar |
+| 65 |  | Seguridad | ¿Se siguen las mejores prácticas de seguridad? | ✓ |  |  | Sanitización de entradas con sanitizarTexto |
+| 66 |  |  | ¿Se protegen los datos sensibles? |  |  | ✓ | No hay datos sensibles en esta aplicación |
+| 67 |  |  | ¿Se previenen vulnerabilidades comunes de seguridad? | ✓ |  |  | Prevención de XSS en sanitizarTexto |
+| 68 |  |  | ¿Se implementan mecanismos de autenticación robustos? |  |  | ✓ | No hay autenticación en esta aplicación |
+| 69 |  |  | ¿Se valida y sanitiza la entrada del usuario? | ✓ |  |  | función sanitizarTexto en app.js |
+| 70 | Preparación para producción | Limpieza final | ¿Se han eliminado códigos de depuración? |  | ✗ |  | console.debug y console.info presentes |
+| 71 |  |  | ¿Se han actualizado los comentarios? | ✓ |  |  | Comentarios actualizados con checkmarks ✅ |
+| 72 |  |  | ¿Se han atendido todas las advertencias del compilador? |  |  | ✓ | No se puede verificar |
+| 73 |  | Documentación | ¿La documentación del código está completa y actualizada? | ✓ |  |  | Comentarios explicativos adecuados |
+| 74 |  |  | ¿Existen instrucciones de despliegue claras? |  | ✗ |  | No hay instrucciones de despliegue |
+| 75 |  |  | ¿Se documentan las dependencias y requisitos? |  | ✗ |  | No se documentan las dependencias |
+| 76 |  | Configuración | ¿Se gestionan las configuraciones por entorno? |  | ✗ |  | URLs de API hardcodeadas |
+| 77 |  |  | ¿Las credenciales y claves no están codificadas en duro? |  |  | ✓ | No hay credenciales en el código |
+
