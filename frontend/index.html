@@ -1,110 +1,50 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Funkelin - Registro de Mascotas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #4CAF50;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    input {
-      margin-right: 10px;
-      padding: 5px;
-    }
-    button {
-      padding: 5px 10px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 5px 0;
-      padding: 5px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funkelin - Gestión de Mascotas</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Bienvenido a Funkelin</h1>
+    <div class="container">
+        <header>
+            <h1>✨ Funkelin - Gestión de Mascotas ✨</h1>
+        </header>
 
-  <h2>Registrar Mascota</h2>
-  <form id="form-mascota">
-    <input type="text" id="nombre" placeholder="Nombre" required>
-    <input type="text" id="especie" placeholder="Especie" required>
-    <button type="submit">Agregar</button>
-  </form>
+        <main>
+            <!-- Formulario para agregar mascotas -->
+            <section class="form-section">
+                <h2>Agregar una nueva mascota</h2>
+                <form id="mascotaForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre de la mascota:</label>
+                        <input type="text" id="nombre" placeholder="Ejemplo: Firulais" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="especie">Especie (Perro/Gato):</label>
+                        <input type="text" id="especie" placeholder="Ejemplo: Perro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edad">Edad de la mascota:</label>
+                        <input type="number" id="edad" min="1" placeholder="Ejemplo: 3" required>
+                    </div>
+                    <button type="submit">Agregar Mascota</button>
+                </form>
+            </section>
 
-  <h2>Lista de Mascotas</h2>
-  <button onclick="cargarMascotas()">Ver Mascotas</button>
-  <ul id="lista-mascotas"></ul>
+            <!-- Lista de mascotas -->
+            <section class="list-section">
+                <h2>Lista de Mascotas 🐾</h2>
+                <ul id="mascotasLista" class="mascotas-list">
+                    <!-- Aquí se agregarán dinámicamente las mascotas -->
+                </ul>
+            </section>
+        </main>
 
-  <script>
-    // Manejar el envío del formulario
-    document.getElementById("form-mascota").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const nombre = document.getElementById("nombre").value.trim();
-      const especie = document.getElementById("especie").value.trim();
-
-      if (!nombre || !especie) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
-
-      try {
-        const res = await fetch("http://127.0.0.1:5000/api/mascotas", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre, especie }),
-        });
-
-        if (res.ok) {
-          alert("Mascota agregada correctamente");
-          document.getElementById("form-mascota").reset();
-          cargarMascotas(); // Actualizar la lista
-        } else {
-          alert("Error al agregar la mascota");
-        }
-      } catch (error) {
-        console.error("Error en la conexión:", error);
-        alert("No se pudo conectar con el servidor.");
-      }
-    });
-
-    // Función para cargar la lista de mascotas
-    async function cargarMascotas() {
-      try {
-        const res = await fetch("http://127.0.0.1:5000/api/mascotas");
-        const data = await res.json();
-
-        const lista = document.getElementById("lista-mascotas");
-        lista.innerHTML = "";
-        data.forEach((m) => {
-          const item = document.createElement("li");
-          item.textContent = `${m.nombre} (${m.especie})`;
-          lista.appendChild(item);
-        });
-      } catch (error) {
-        console.error("Error al cargar mascotas:", error);
-        alert("No se pudo cargar la lista de mascotas.");
-      }
-    }
-  </script>
+        <footer>
+            <p>Hecho con 💖 para la gestión de tus mascotas | Funkelin</p>
+        </footer>
+    </div>
 </body>
 </html>

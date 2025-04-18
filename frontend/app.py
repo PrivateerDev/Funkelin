@@ -1,6 +1,10 @@
-from services.mascota_service import agregar_mascota
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-@app.route('/api/agregar_demo')
-def demo():
-    agregar_mascota("Luna", "Gato")
-    return "Mascota agregada"
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mascotas.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+with app.app_context():
+    db.create_all()  # Esto crea las tablas en la base de datos
