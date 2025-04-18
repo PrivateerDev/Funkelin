@@ -1,5 +1,7 @@
-backend/venv/
+venv/
 __pycache__/
 *.pyc
-funkelin.db
-.env
+*.pyo
+.DS_Store
+.idea/
+.vscode/
