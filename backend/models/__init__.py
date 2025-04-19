@@ -1,4 +1,4 @@
- 
+# models/__init__.py
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()  # Instancia única de SQLAlchemy para todo el proyecto
+db = SQLAlchemy()
