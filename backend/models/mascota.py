@@ -1,7 +1,7 @@
 # models/mascota.py
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Any
-from models import db
+from backend.models import db  # ✅ Importación desde models para evitar ciclos
 
 if TYPE_CHECKING:
     from flask_sqlalchemy.model import Model
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class Mascota(db.Model):  # type: ignore
     __tablename__ = "mascotas"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # ✅ Agregué autoincrement para evitar problemas de ID manuales
     nombre = db.Column(db.String(50), nullable=False)
     tipo = db.Column(db.String(50), nullable=False)
     edad = db.Column(db.Integer, nullable=False)
