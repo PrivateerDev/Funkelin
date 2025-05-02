@@ -1,0 +1,9 @@
+backend/models:  --exclude-dir=1
+backend/models/init:  language unknown (#3)
+backend/models/mascota:  language unknown (#3)
+backend/routes:  --exclude-dir=1
+backend/routes/init:  language unknown (#3)
+backend/routes/mascotas:  language unknown (#3)
+backend/services:  --exclude-dir=1
+backend/services/init:  language unknown (#3)
+backend/services/mascota:  language unknown (#3)

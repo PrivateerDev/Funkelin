@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funkelin - Gestión de Mascotas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>🐾 Funkelin - Gestión de Mascotas 🚀</h1>
+    </header>
+
+    <main>
+        <section id="mascotaFormContainer">
+            <h2>Agregar una nueva mascota</h2>
+            <form id="mascotaForm">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" placeholder="Ejemplo: Nube" required>
+
+                <label for="especie">Especie:</label>
+                <select id="especie">
+                    <option value="Perro">Perro</option>
+                    <option value="Gato">Gato</option>
+                    <option value="Ave">Ave</option>
+                    <option value="Otro">Otro</option>
+                </select>
+
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" min="1" placeholder="Ejemplo: 3" required>
+
+                <button type="submit" class="btn">➕ Agregar Mascota</button>
+            </form>
+        </section>
+
+        <section id="mascotasListaContainer">
+            <h2>Mascotas Registradas</h2>
+            <ul id="mascotasLista"></ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>✨ Funkelin - Un proyecto modular para gestión de mascotas 🚀</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

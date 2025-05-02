@@ -1,0 +1,6 @@
+"""Módulo de inicialización para modelos de Funkelin."""
+
+from .mascota import Mascota  # ✅ Importa el modelo de Mascota para que esté disponible en el paquete
+from backend.models import db  # ✅ Asegura que la base de datos se inicializa correctamente
+
+__all__ = ["Mascota", "db"]  # ✅ Expone solo los elementos necesarios para evitar importaciones inesperadas
