@@ -1,6 +1,5 @@
-"""Módulo de inicialización para servicios en Funkelin."""
+# ✅ Importación organizada de servicios
+from backend.services.mascota_service import agregar_mascota, obtener_mascotas, eliminar_mascota  # noqa: F401
 
-from backend.services.mascota_service import agregar_mascota, obtener_mascotas, eliminar_mascota
-
-# ✅ Lista de servicios disponibles
+# ✅ Registro global de servicios
 __all__ = ["agregar_mascota", "obtener_mascotas", "eliminar_mascota"]

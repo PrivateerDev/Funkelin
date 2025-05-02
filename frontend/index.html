@@ -15,12 +15,12 @@
     <main>
         <section id="mascotaFormContainer">
             <h2>Agregar una nueva mascota</h2>
-            <form id="mascotaForm">
+            <form id="mascotaForm" aria-label="Formulario para agregar mascotas">
                 <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" placeholder="Ejemplo: Nube" required>
+                <input type="text" id="nombre" placeholder="Ejemplo: Nube" required aria-required="true">
 
                 <label for="especie">Especie:</label>
-                <select id="especie">
+                <select id="especie" required aria-required="true">
                     <option value="Perro">Perro</option>
                     <option value="Gato">Gato</option>
                     <option value="Ave">Ave</option>
@@ -28,9 +28,9 @@
                 </select>
 
                 <label for="edad">Edad:</label>
-                <input type="number" id="edad" min="1" placeholder="Ejemplo: 3" required>
+                <input type="number" id="edad" min="1" placeholder="Ejemplo: 3" required aria-required="true">
 
-                <button type="submit" class="btn">➕ Agregar Mascota</button>
+                <button type="submit" class="btn" aria-label="Agregar Mascota">➕ Agregar Mascota</button>
             </form>
         </section>
 
@@ -44,6 +44,7 @@
         <p>✨ Funkelin - Un proyecto modular para gestión de mascotas 🚀</p>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
+    <script src="script.js" defer></script>  <!-- ✅ Carga optimizada con defer -->
 </body>
 </html>

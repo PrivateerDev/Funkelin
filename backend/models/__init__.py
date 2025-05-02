@@ -1,9 +1,9 @@
-"""Módulo de inicialización para modelos de Funkelin."""
-
 from flask_sqlalchemy import SQLAlchemy
 
-# ✅ Inicializar la base de datos sin importar modelos aún
+# ✅ Inicialización segura de la base de datos
 db = SQLAlchemy()
 
-# ✅ No importa `Mascota` directamente aquí para evitar ciclos
-__all__ = ["db"]  # ✅ Solo exporta `db`
+# ✅ Importación explícita de modelos para evitar errores de referencia circular
+from backend.models.mascota import Mascota  # noqa: F401
+
+__all__ = ["db", "Mascota"]

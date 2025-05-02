@@ -36,6 +36,7 @@ header {
 header h1 {
     color: #ff589b;
     font-size: 2rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* ✅ Formulario con mejor estructura */
@@ -62,14 +63,20 @@ label {
     margin-top: 10px;
 }
 
+/* ✅ Mejora en accesibilidad de inputs y selects */
 input, select {
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 1rem;
 }
 
-/* ✅ Botón de agregar mascota */
+input:focus-visible, select:focus-visible {
+    outline: 2px solid #ff589b;
+}
+
+/* ✅ Botón de agregar mascota con accesibilidad */
 button.btn {
     background: #ff589b;
     color: white;
@@ -80,6 +87,13 @@ button.btn {
     cursor: pointer;
     margin-top: 10px;
     transition: all 0.3s ease-in-out;
+}
+
+/* ✅ Evitar animaciones para usuarios con preferencias de reducción */
+@media (prefers-reduced-motion: reduce) {
+    button.btn, button.delete-btn {
+        transition: none;
+    }
 }
 
 button.btn:hover {
@@ -111,7 +125,7 @@ ul li {
     align-items: center;
 }
 
-/* ✅ Botón de eliminación con mejor visibilidad */
+/* ✅ Botón de eliminación con accesibilidad */
 button.delete-btn {
     background: #ff3b6f;
     color: white;
