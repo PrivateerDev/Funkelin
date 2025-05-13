@@ -22,7 +22,12 @@ body {
     border-radius: 10px;
     background: #fff;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out; /* ✅ Suaviza cambios de tamaño */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* ✅ Optimización de animaciones */
+}
+
+.container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* ✅ Estilo de los botones con accesibilidad */
@@ -36,11 +41,12 @@ button {
     border-radius: 5px;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: background 0.2s ease-in-out;
+    transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 button:hover {
     background: #ff85c2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* ✅ Efecto al pasar el mouse */
 }
 
 /* ✅ Mejora de accesibilidad en lista de mascotas */
@@ -58,11 +64,23 @@ button:hover {
     border: 1px solid #ff69b4;
     color: #555;
     font-size: 1rem;
-    transition: transform 0.2s ease-in-out; /* ✅ Efecto de interacción */
+    transition: transform 0.2s ease-in-out, background 0.2s ease-in-out; /* ✅ Efecto de interacción */
 }
 
 .mascotas-list li:hover {
     transform: scale(1.05);
+    background: #ffd1dc; /* ✅ Cambio de color al interactuar */
+}
+
+/* ✅ Mejora de accesibilidad para usuarios con preferencias de contraste */
+@media (prefers-contrast: more) {
+    body {
+        background: #fff;
+        color: #000;
+    }
+    .container {
+        background: #f1f1f1;
+    }
 }
 
 /* ✅ Media Queries para responsividad */

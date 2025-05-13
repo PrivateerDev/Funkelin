@@ -1,5 +1,25 @@
+import logging
+
+# ✅ Configurar logging para la inicialización de servicios
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("backend/logs/funkelin_services_init.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logging.debug("Iniciando la importación de servicios en `services/__init__.py`")  # DEBUG
+
 # ✅ Importación organizada de servicios
-from backend.services.mascota_service import agregar_mascota, obtener_mascotas, eliminar_mascota  # noqa: F401
+try:
+    from backend.services.mascota_service import agregar_mascota, obtener_mascotas, eliminar_mascota  # noqa: F401
+    logging.info("✅ Servicios importados correctamente: `agregar_mascota`, `obtener_mascotas`, `eliminar_mascota`")  # INFO
+except ImportError as e:
+    logging.error(f"⚠ Error al importar servicios en `services/__init__.py`: {e}")  # ERROR
 
 # ✅ Registro global de servicios
 __all__ = ["agregar_mascota", "obtener_mascotas", "eliminar_mascota"]
+
+logging.debug("Finalizando la inicialización de `services/__init__.py`")  # DEBUG

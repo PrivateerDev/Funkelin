@@ -1,14 +1,36 @@
-"""Módulo de inicialización para rutas en Funkelin."""
-
+import logging
 from flask import Blueprint
 
+# ✅ Configurar logging para la inicialización de Blueprints
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("backend/logs/funkelin_blueprints.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logging.debug("Iniciando la configuración de rutas en Funkelin")  # DEBUG
+
 # ✅ Importa los Blueprints de cada módulo de rutas
-from backend.routes.mascotas import mascotas_bp
+try:
+    from backend.routes.mascotas import mascotas_bp
+    logging.info("✅ Blueprint `mascotas_bp` importado correctamente")  # INFO
+except ImportError as e:
+    logging.error(f"⚠ Error al importar `mascotas_bp`: {e}")  # ERROR
 
 # ✅ Lista de Blueprints registrados en el sistema
 blueprints = [mascotas_bp]
 
 def register_blueprints(app):
     """Registra todos los Blueprints en la aplicación Flask."""
+    logging.debug("Registrando Blueprints en la aplicación")  # DEBUG
     for blueprint in blueprints:
-        app.register_blueprint(blueprint)
+        try:
+            app.register_blueprint(blueprint)
+            logging.info(f"✅ Blueprint `{blueprint.name}` registrado exitosamente")  # INFO
+        except Exception as e:
+            logging.error(f"⚠ Error al registrar Blueprint `{blueprint.name}`: {e}")  # ERROR
+
+logging.debug("Finalizando la inicialización de rutas")  # DEBUG

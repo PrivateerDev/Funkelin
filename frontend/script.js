@@ -1,19 +1,24 @@
 // ✅ Función para obtener mascotas con validaciones avanzadas y manejo resiliente
 export async function fetchMascotas() {
+    console.debug("📡 Ejecutando `fetchMascotas()` para obtener mascotas...");
+
     const CONTROLLER = new AbortController();  // ✅ Agregar un timeout para evitar bloqueos
     const TIMEOUT_MS = 5000; // ⏳ Tiempo máximo de espera
 
     try {
-        console.log("🔎 Iniciando solicitud para obtener mascotas...");
-        
+        console.info("🔎 Iniciando solicitud al backend...");
+
         // ✅ Configurar timeout en la solicitud
-        const timeout = setTimeout(() => CONTROLLER.abort(), TIMEOUT_MS);
+        const timeout = setTimeout(() => {
+            CONTROLLER.abort();
+            console.warn("⏳ Solicitud abortada: tiempo de espera excedido.");
+        }, TIMEOUT_MS);
 
         const response = await fetch("http://127.0.0.1:5000/api/mascotas", {
             method: "GET",
             headers: { "Accept": "application/json" },
             mode: "cors",
-            signal: CONTROLLER.signal // ✅ Asociar el timeout
+            signal: CONTROLLER.signal  // ✅ Asociar el timeout
         });
 
         clearTimeout(timeout); // ✅ Limpiar timeout si la solicitud se completa
@@ -28,8 +33,7 @@ export async function fetchMascotas() {
         if (!Array.isArray(mascotas)) throw new Error("⚠ La respuesta del backend no es una lista válida.");
         if (!mascotas.every(m => typeof m.nombre === "string")) throw new Error("⚠ Alguna mascota no tiene un nombre válido.");
 
-        console.log("✅ Mascotas obtenidas con éxito:", mascotas);
-
+        console.info(`✅ Mascotas obtenidas con éxito (${mascotas.length} registros)`);
         return mascotas;
 
     } catch (error) {

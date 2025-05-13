@@ -1,13 +1,24 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Any
+import logging
 from backend.models import db  # ✅ Importación desde models para evitar ciclos
 
 if TYPE_CHECKING:
     from flask_sqlalchemy.model import Model
 
+# ✅ Configurar logging con niveles detallados
+logging.basicConfig(
+    level=logging.DEBUG,  # Permite registrar todos los eventos
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("backend/logs/funkelin_model.log"),
+        logging.StreamHandler()
+    ]
+)
+
 class Mascota(db.Model):  # type: ignore
     """Modelo de Mascota en la base de datos."""
-    
+
     __tablename__ = "mascotas"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # ✅ ID autoincrementado
@@ -17,22 +28,37 @@ class Mascota(db.Model):  # type: ignore
 
     def __init__(self, nombre: str, tipo: str, edad: int) -> None:
         """Inicializa una instancia de Mascota con validaciones."""
-        assert isinstance(nombre, str), "El nombre debe ser un string."
-        assert len(nombre) > 1, "El nombre debe tener al menos 2 caracteres."
-        assert isinstance(tipo, str), "El tipo debe ser un string."
-        assert tipo in ["Perro", "Gato", "Ave", "Otro"], "Tipo no válido."
-        assert isinstance(edad, int), "La edad debe ser un número entero."
-        assert edad > 0, "La edad debe ser mayor a 0."
+        logging.debug("Inicio de la inicialización de Mascota")  # DEBUG
 
-        self.nombre = nombre.strip()
-        self.tipo = tipo.strip()
-        self.edad = edad
+        try:
+            assert isinstance(nombre, str), "El nombre debe ser un string."
+            assert len(nombre) > 1, "El nombre debe tener al menos 2 caracteres."
+            assert isinstance(tipo, str), "El tipo debe ser un string."
+            assert tipo in ["Perro", "Gato", "Ave", "Otro"], "Tipo no válido."
+            assert isinstance(edad, int), "La edad debe ser un número entero."
+            assert edad > 0, "La edad debe ser mayor a 0."
+
+            self.nombre = nombre.strip()
+            self.tipo = tipo.strip()
+            self.edad = edad
+
+            logging.info(f"✅ Mascota creada exitosamente: {self.to_dict()}")  # INFO
+
+        except AssertionError as e:
+            logging.error(f"⚠ Error al crear Mascota: {str(e)}")  # ERROR
+            raise
+
+        logging.debug("Fin de la inicialización de Mascota")  # DEBUG
 
     def to_dict(self) -> Dict[str, Any]:
         """Convierte el objeto Mascota a un diccionario."""
-        assert self.id is not None, "El objeto Mascota debe tener un ID asignado."
+        logging.debug("Convirtiendo Mascota a diccionario")  # DEBUG
+
+        if self.id is None:
+            logging.warning("⚠ Se intentó convertir una Mascota sin ID")  # WARNING
+
         return {
-            "id": self.id,
+            "id": getattr(self, "id", None),
             "nombre": self.nombre,
             "tipo": self.tipo,
             "edad": self.edad,

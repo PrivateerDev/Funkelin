@@ -25,6 +25,12 @@ body {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* ✅ Optimización de animaciones */
+}
+
+.container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* ✅ Estilo del encabezado */
@@ -39,7 +45,7 @@ header h1 {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ Formulario con mejor estructura */
+/* ✅ Formulario con estructura mejorada */
 #mascotaFormContainer {
     background: #fff;
     padding: 15px;
@@ -48,22 +54,7 @@ header h1 {
     margin-bottom: 20px;
 }
 
-h2 {
-    text-align: center;
-    color: #ff589b;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-label {
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* ✅ Mejora en accesibilidad de inputs y selects */
+/* ✅ Accesibilidad en inputs y selects */
 input, select {
     padding: 10px;
     margin-top: 5px;
@@ -123,6 +114,12 @@ ul li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.2s ease-in-out, background 0.2s ease-in-out; /* ✅ Optimización */
+}
+
+ul li:hover {
+    transform: scale(1.05);
+    background: #ffd1dc;
 }
 
 /* ✅ Botón de eliminación con accesibilidad */

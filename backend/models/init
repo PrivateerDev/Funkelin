@@ -1,6 +1,29 @@
-"""Módulo de inicialización para modelos de Funkelin."""
+xpone solo los elementos necesarios para evimport logging
 
-from .mascota import Mascota  # ✅ Importa el modelo de Mascota para que esté disponible en el paquete
-from backend.models import db  # ✅ Asegura que la base de datos se inicializa correctamente
+                                           # ✅ Configurar logging para la inicialización del módulo de modelos
+                                           logging.basicConfig(
+                                               level=logging.DEBUG,
+                                               format="%(asctime)s - %(levelname)s - %(message)s",
+                                               handlers=[
+                                                   logging.FileHandler("backend/logs/funkelin_models_init.log"),
+                                                   logging.StreamHandler()
+                                               ]
+                                           )
 
-__all__ = ["Mascota", "db"]  # ✅ Expone solo los elementos necesarios para evitar importaciones inesperadas
+                                           logging.debug("Iniciando la importación de modelos de Funkelin")  # DEBUG
+
+                                           try:
+                                               from .mascota import Mascota  # ✅ Importa el modelo de Mascota
+                                               logging.info("✅ Modelo Mascota importado correctamente")  # INFO
+                                           except ImportError as e:
+                                               logging.error(f"⚠ Error al importar el modelo Mascota: {e}")  # ERROR
+
+                                           try:
+                                               from backend.models import db  # ✅ Asegura que la base de datos se inicializa correctamente
+                                               logging.info("✅ Base de datos importada correctamente")  # INFO
+                                           except ImportError as e:
+                                               logging.error(f"⚠ Error al importar la base de datos: {e}")  # ERROR
+
+                                           __all__ = ["Mascota", "db"]
+
+                                           logging.debug("Finalizando la inicialización del módulo de modelos")  # DEBUGitar importaciones inesperadas
