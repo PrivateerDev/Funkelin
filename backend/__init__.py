@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -14,53 +13,28 @@ logging.basicConfig(
     ]
 )
 
-logging.debug("Iniciando la configuración del backend en `__init__.py`")  # DEBUG
+logging.debug("🔄 Iniciando la configuración del backend en `__init__.py`")
+
+# ✅ Diccionario centralizado de errores
+ERROR_MESSAGES = {
+    "import_fail": "No se pudo registrar el Blueprint `mascotas_bp`. Verifica rutas o dependencias.",
+    "db_create_fail": "Error al crear las tablas en la base de datos.",
+    "unexpected_error": "Error inesperado en la inicialización del backend."
+}
 
 # ✅ Inicialización global de la base de datos
-db = SQLAlchemy()
-logging.info("✅ Instancia global de SQLAlchemy creada")  # INFO
+try:
+    db = SQLAlchemy()
+    logging.info("✅ Instancia global de SQLAlchemy creada")
+except Exception as e:
+    logging.critical(f"⚠ {ERROR_MESSAGES['unexpected_error']} - Detalles: {e}")
+    raise RuntimeError(ERROR_MESSAGES["unexpected_error"])
 
 # ✅ Función para crear y configurar la aplicación Flask
 def create_app():
     """Inicializa la aplicación Flask con configuración segura y modular."""
-    logging.debug("Creando la aplicación Flask")  # DEBUG
+    logging.debug("🔄 Creando la aplicación Flask")
 
     app = Flask(__name__)
 
-    # ✅ Configuración de la base de datos
-    logging.debug("Configurando la base de datos SQLite")  # DEBUG
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///backend/mascotas.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    # ✅ Inicializar extensiones
-    db.init_app(app)
-    logging.info("✅ Base de datos inicializada con la aplicación Flask")  # INFO
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
-    logging.info("✅ CORS configurado correctamente")  # INFO
-
-    # ✅ Registrar Blueprints después de inicializar la app
-    try:
-        from backend.routes.mascotas import mascotas_bp
-        app.register_blueprint(mascotas_bp)
-        logging.info("✅ Blueprint `mascotas_bp` registrado exitosamente")  # INFO
-    except ImportError as e:
-        logging.error(f"⚠ Error al registrar `mascotas_bp`: {e}")  # ERROR
-
-    # ✅ Crear tablas dentro del contexto de Flask
-    logging.debug("Creando tablas en la base de datos")  # DEBUG
-    with app.app_context():
-        try:
-            db.create_all()
-            logging.info("✅ Tablas creadas exitosamente")  # INFO
-        except Exception as e:
-            logging.error(f"⚠ Error al crear tablas en la base de datos: {e}")  # ERROR
-
-    logging.debug("Finalizando configuración de la aplicación Flask")  # DEBUG
-    return app
-
-# ✅ Exponer solo elementos esenciales
-__all__ = ["db", "create_app"]
-logging.debug("Finalizando inicialización de `__init__.py`")  # DEBUG
-=======
- 
->>>>>>> f978f38 (Reinstanciación completa del backend:)
+    #

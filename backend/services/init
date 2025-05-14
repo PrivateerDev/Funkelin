@@ -10,16 +10,22 @@ logging.basicConfig(
     ]
 )
 
-logging.debug("Iniciando la importación de servicios en `services/__init__.py`")  # DEBUG
+logging.debug("🔄 Iniciando la importación de servicios en `services/__init__.py`")
+
+# ✅ Diccionario centralizado de errores
+ERROR_MESSAGES = {
+    "import_fail": "No se pudo importar los servicios. Verifica rutas o dependencias.",
+    "unexpected_error": "Error inesperado en la inicialización de servicios."
+}
 
 # ✅ Importación organizada de servicios
 try:
     from backend.services.mascota_service import agregar_mascota, obtener_mascotas, eliminar_mascota
-    logging.info("✅ Servicios importados correctamente: `agregar_mascota`, `obtener_mascotas`, `eliminar_mascota`")  # INFO
+    logging.info("✅ Servicios importados correctamente: `agregar_mascota`, `obtener_mascotas`, `eliminar_mascota`")
 except ImportError as e:
-    logging.error(f"⚠ Error al importar servicios en `services/__init__.py`: {e}")  # ERROR
+    logging.error(f"⚠ {ERROR_MESSAGES['import_fail']} - Detalles: {e}")
 
 # ✅ Lista de servicios disponibles
 __all__ = ["agregar_mascota", "obtener_mascotas", "eliminar_mascota"]
 
-logging.debug("Finalizando la inicialización de `services/__init__.py`")  # DEBUG
+logging.debug("✅ Finalizando la inicialización de `services/__init__.py`")

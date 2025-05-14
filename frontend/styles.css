@@ -1,168 +1,192 @@
-<<<<<<< HEAD
 /* ✅ Reset General */
-=======
-/* General Reset */
->>>>>>> f978f38 (Reinstanciación completa del backend:)
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-<<<<<<< HEAD
-/* ✅ Estilo del cuerpo con accesibilidad mejorada */
+/* ✅ Estilo del cuerpo */
 body {
     font-family: 'Poppins', Arial, sans-serif;
-    background: linear-gradient(to bottom right, #fff3f8, #ffe3ec);
-    color: #333;
+    background: linear-gradient(to bottom right, #fff0f5, #ffccd4);
+    color: #222;
     line-height: 1.6;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 200vh;
 }
 
 /* ✅ Contenedor principal */
 .container {
-    max-width: 850px;
+    max-width: 1200px;
     padding: 20px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* ✅ Optimización de animaciones */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .container:hover {
     transform: scale(1.02);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ Estilo del encabezado */
+/* ✅ Encabezado dinámico y animado */
 header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: linear-gradient(270deg, #cc2b5e, #753a88, #cc2b5e);
+    background-size: 600% 600%;
+    animation: gradientShift 10s ease infinite;
+    color: white;
     text-align: center;
-    padding: 20px 0;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+header:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* 📝 Título y subtítulo con efecto suave */
 header h1 {
+    font-size: 3rem;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: slideDown 1s ease-out;
+    transition: color 0.3s ease;
     color: #ff589b;
-    font-size: 2rem;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ Formulario con estructura mejorada */
-#mascotaFormContainer {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-/* ✅ Accesibilidad en inputs y selects */
-input, select {
-    padding: 10px;
-    margin-top: 5px;
-=======
-/* Body Styling */
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background: linear-gradient(to bottom right, #f9f9f9, #ffebf2);
-    color: #333;
-}
-
-/* Container */
-.container {
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 2rem;
-    color: #ff69b4;
-    font-weight: bold;
-}
-
-/* Form Section */
-.form-section h2 {
-    color: #ff69b4;
-    margin-bottom: 15px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
->>>>>>> f978f38 (Reinstanciación completa del backend:)
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-<<<<<<< HEAD
-input:focus-visible, select:focus-visible {
-    outline: 2px solid #ff589b;
-}
-
-/* ✅ Botón de agregar mascota con accesibilidad */
-button.btn {
-    background: #ff589b;
-    color: white;
-    padding: 10px;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+header p {
+    font-size: 1.2rem;
     margin-top: 10px;
+    opacity: 0.9;
+    animation: slideUp 1s ease-out;
+    transition: opacity 0.3s ease;
+}
+
+header:hover h1 {
+    color: #ffd1f4;
+}
+
+header:hover p {
+    opacity: 1;
+}
+
+/* 🎬 Animaciones */
+@keyframes gradientShift {
+    0% { background-position: 0% 80%; }
+    80% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* ✅ NUEVO: contenedor para paneles lado a lado */
+#panelesContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap; /* Responsive */
+    margin-top: 40px;
+    width: 100%;
+}
+
+/* ✅ Contenedor de formulario y lista */
+#mascotaFormContainer,
+#mascotasListaContainer {
+    background: #ffe3ec;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #ff589b;
+    flex: 1 1 48%; /* ✅ Distribución lado a lado */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    max-width: 100%;
+}
+
+/* ✅ Efecto hover en paneles */
+#mascotaFormContainer:hover,
+#mascotasListaContainer:hover {
+    transform: scale(1.02);
+    background: #ffd1dc;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ Organización de los elementos con flexbox */
+#mascotaForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* ✅ Input y select con diseño uniforme */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
     transition: all 0.3s ease-in-out;
 }
 
-/* ✅ Evitar animaciones para usuarios con preferencias de reducción */
-@media (prefers-reduced-motion: reduce) {
-    button.btn, button.delete-btn {
-        transition: none;
-    }
+input:focus, select:focus {
+    border-color: #ff589b;
+    box-shadow: 0 0 8px rgba(255, 88, 155, 0.4);
 }
 
-button.btn:hover {
-    background: #ff73af;
-    transform: scale(1.05);
+/* ✅ Botón de agregar mascota alineado con el botón de eliminación */
+button.btn,
+button.delete-btn {
+    background: linear-gradient(135deg, #ff3b6f, #ff5a85);
+    color: white;
+    font-size: 2.7rem;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
-/* ✅ Lista de mascotas con mejor presentación */
-#mascotasListaContainer {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+button.btn:hover,
+button.delete-btn:hover {
+    background: linear-gradient(135deg, #ff5a85, #ff73af);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* ✅ Lista estilizada */
 ul {
     list-style: none;
     padding: 0;
 }
 
+/* ✅ Tarjetas para mascotas */
 ul li {
     background: #ffe3ec;
     margin: 10px 0;
@@ -172,94 +196,33 @@ ul li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s ease-in-out, background 0.2s ease-in-out; /* ✅ Optimización */
+    transition: transform 0.5s ease-in-out, background 0.2s ease-in-out;
 }
 
+/* ✅ Efecto hover */
 ul li:hover {
     transform: scale(1.05);
     background: #ffd1dc;
 }
 
-/* ✅ Botón de eliminación con accesibilidad */
-button.delete-btn {
-    background: #ff3b6f;
-    color: white;
-    padding: 5px 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-button.delete-btn:hover {
-    background: #ff5a85;
-    transform: scale(1.1);
-}
-
-/* ✅ Pie de página */
-footer {
-    text-align: center;
-    padding: 10px;
-    color: #777;
-    font-size: 0.9rem;
-}
-
-/* ✅ Media Queries para responsividad */
+/* ✅ Ajuste responsive */
 @media (max-width: 600px) {
-    .container {
-        max-width: 90%;
+    header h1 {
+        font-size: 2.2rem;
     }
 
-    header h1 {
-        font-size: 1.8rem;
+    header p {
+        font-size: 1rem;
+    }
+
+    #mascotaFormContainer,
+    #mascotasListaContainer {
+        flex: 1 1 100%;
+        max-width: 90%;
     }
 
     ul li {
         flex-direction: column;
         text-align: center;
     }
-
-    button {
-        width: 100%;
-    }
-=======
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: #ff69b4;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-button:hover {
-    background: #ff85c2;
-}
-
-/* List Section */
-.list-section h2 {
-    color: #ff69b4;
-    margin-bottom: 15px;
-}
-
-.mascotas-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.mascotas-list li {
-    background: #ffebf2;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ff69b4;
-    color: #555;
-    font-size: 1rem;
->>>>>>> f978f38 (Reinstanciación completa del backend:)
 }

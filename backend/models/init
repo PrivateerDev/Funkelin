@@ -1,29 +1,39 @@
-xpone solo los elementos necesarios para evimport logging
+import logging
 
-                                           # ✅ Configurar logging para la inicialización del módulo de modelos
-                                           logging.basicConfig(
-                                               level=logging.DEBUG,
-                                               format="%(asctime)s - %(levelname)s - %(message)s",
-                                               handlers=[
-                                                   logging.FileHandler("backend/logs/funkelin_models_init.log"),
-                                                   logging.StreamHandler()
-                                               ]
-                                           )
+# ✅ Configurar logging para la inicialización del módulo de modelos
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("backend/logs/funkelin_models_init.log"),
+        logging.StreamHandler()
+    ]
+)
 
-                                           logging.debug("Iniciando la importación de modelos de Funkelin")  # DEBUG
+logging.debug("🔄 Iniciando la importación de modelos de Funkelin")
 
-                                           try:
-                                               from .mascota import Mascota  # ✅ Importa el modelo de Mascota
-                                               logging.info("✅ Modelo Mascota importado correctamente")  # INFO
-                                           except ImportError as e:
-                                               logging.error(f"⚠ Error al importar el modelo Mascota: {e}")  # ERROR
+# ✅ Diccionario centralizado de errores
+ERROR_MESSAGES = {
+    "import_fail": "No se pudo importar el modelo Mascota. Verifica rutas o dependencias.",
+    "db_fail": "Error al importar la base de datos. Verifica la conexión y configuración.",
+    "unexpected_error": "Error inesperado en la inicialización de modelos."
+}
 
-                                           try:
-                                               from backend.models import db  # ✅ Asegura que la base de datos se inicializa correctamente
-                                               logging.info("✅ Base de datos importada correctamente")  # INFO
-                                           except ImportError as e:
-                                               logging.error(f"⚠ Error al importar la base de datos: {e}")  # ERROR
+# ✅ Importación organizada de modelos
+try:
+    from .mascota import Mascota  # ✅ Importa el modelo de Mascota
+    logging.info("✅ Modelo `Mascota` importado correctamente")
+except ImportError as e:
+    logging.error(f"⚠ {ERROR_MESSAGES['import_fail']} - Detalles: {e}")
 
-                                           __all__ = ["Mascota", "db"]
+# ✅ Importación de la base de datos
+try:
+    from backend.models import db  # ✅ Asegura que la base de datos se inicializa correctamente
+    logging.info("✅ Base de datos importada correctamente")
+except ImportError as e:
+    logging.error(f"⚠ {ERROR_MESSAGES['db_fail']} - Detalles: {e}")
 
-                                           logging.debug("Finalizando la inicialización del módulo de modelos")  # DEBUGitar importaciones inesperadas
+# ✅ Registro global de modelos
+__all__ = ["Mascota", "db"]
+
+logging.debug("✅ Finalizando la inicialización del módulo de modelos")

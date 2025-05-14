@@ -11,26 +11,33 @@ logging.basicConfig(
     ]
 )
 
-logging.debug("Iniciando la configuración de rutas en Funkelin")  # DEBUG
+logging.debug("🔄 Iniciando la configuración de rutas en Funkelin")
+
+# ✅ Diccionario de errores centralizado
+ERROR_MESSAGES = {
+    "import_fail": "No se pudo importar el Blueprint `mascotas_bp`. Verifica rutas o dependencias.",
+    "register_fail": "Error al registrar Blueprint en la aplicación.",
+    "unexpected_error": "Error inesperado en la inicialización de rutas."
+}
 
 # ✅ Importa los Blueprints de cada módulo de rutas
 try:
     from backend.routes.mascotas import mascotas_bp
-    logging.info("✅ Blueprint `mascotas_bp` importado correctamente")  # INFO
+    logging.info("✅ Blueprint `mascotas_bp` importado correctamente")
 except ImportError as e:
-    logging.error(f"⚠ Error al importar `mascotas_bp`: {e}")  # ERROR
+    logging.error(f"⚠ {ERROR_MESSAGES['import_fail']} - Detalles: {e}")
 
 # ✅ Lista de Blueprints registrados en el sistema
 blueprints = [mascotas_bp]
 
 def register_blueprints(app):
     """Registra todos los Blueprints en la aplicación Flask."""
-    logging.debug("Registrando Blueprints en la aplicación")  # DEBUG
+    logging.debug("🚀 Registrando Blueprints en la aplicación")
     for blueprint in blueprints:
         try:
             app.register_blueprint(blueprint)
-            logging.info(f"✅ Blueprint `{blueprint.name}` registrado exitosamente")  # INFO
+            logging.info(f"✅ Blueprint `{blueprint.name}` registrado exitosamente")
         except Exception as e:
-            logging.error(f"⚠ Error al registrar Blueprint `{blueprint.name}`: {e}")  # ERROR
+            logging.error(f"⚠ {ERROR_MESSAGES['register_fail']} - Blueprint `{blueprint.name}` - Detalles: {e}")
 
-logging.debug("Finalizando la inicialización de rutas")  # DEBUG
+logging.debug("✅ Finalizando la inicialización de rutas")

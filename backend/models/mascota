@@ -8,58 +8,81 @@ if TYPE_CHECKING:
 
 # ✅ Configurar logging con niveles detallados
 logging.basicConfig(
-    level=logging.DEBUG,  # Permite registrar todos los eventos
+    level=logging.DEBUG,  # Registrar todos los eventos
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("backend/logs/funkelin_model.log"),
+        logging.FileHandler("backend/logs/funkelin_model.log", encoding="utf-8"),  # Asegurar codificación UTF-8
         logging.StreamHandler()
     ]
 )
 
+# ✅ Diccionario centralizado de mensajes de error
+ERROR_MESSAGES = {
+    "invalid_name": "El nombre debe contener entre 2 y 50 caracteres, sin números ni símbolos.",
+    "invalid_type": "Tipo de mascota no válido. Debe ser 'Perro', 'Gato', 'Ave' o 'Otro'.",
+    "invalid_age": "La edad debe ser un número entero positivo mayor a 0.",
+    "unexpected_error": "Error inesperado al inicializar el modelo de Mascota."
+}
+
 class Mascota(db.Model):  # type: ignore
-    """Modelo de Mascota en la base de datos."""
+    """Modelo de Mascota en la base de datos con validaciones defensivas."""
 
     __tablename__ = "mascotas"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # ✅ ID autoincrementado
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
     tipo = db.Column(db.String(50), nullable=False)
     edad = db.Column(db.Integer, nullable=False)
 
     def __init__(self, nombre: str, tipo: str, edad: int) -> None:
-        """Inicializa una instancia de Mascota con validaciones."""
-        logging.debug("Inicio de la inicialización de Mascota")  # DEBUG
+        """Inicializa una instancia de Mascota con validaciones seguras."""
+        logging.debug("🔄 Inicio de la inicialización de Mascota")
 
         try:
-            assert isinstance(nombre, str), "El nombre debe ser un string."
-            assert len(nombre) > 1, "El nombre debe tener al menos 2 caracteres."
-            assert isinstance(tipo, str), "El tipo debe ser un string."
-            assert tipo in ["Perro", "Gato", "Ave", "Otro"], "Tipo no válido."
-            assert isinstance(edad, int), "La edad debe ser un número entero."
-            assert edad > 0, "La edad debe ser mayor a 0."
+            self.nombre = self.validar_nombre(nombre)
+            self.tipo = self.validar_tipo(tipo)
+            self.edad = self.validar_edad(edad)
 
-            self.nombre = nombre.strip()
-            self.tipo = tipo.strip()
-            self.edad = edad
+            logging.info(f"✅ Mascota creada exitosamente: {self.to_dict()}")
+        except ValueError as e:
+            logging.error(f"⚠ Error al crear Mascota: {str(e)}")
+            raise ValueError(f"{ERROR_MESSAGES['unexpected_error']} - {str(e)}")
 
-            logging.info(f"✅ Mascota creada exitosamente: {self.to_dict()}")  # INFO
+        logging.debug("✅ Fin de la inicialización de Mascota")
 
-        except AssertionError as e:
-            logging.error(f"⚠ Error al crear Mascota: {str(e)}")  # ERROR
-            raise
+    @staticmethod
+    def validar_nombre(nombre: str) -> str:
+        """Valida y sanitiza el nombre."""
+        logging.debug(f"🔎 Validando nombre: {nombre}")
+        if not isinstance(nombre, str) or len(nombre.strip()) < 2 or len(nombre.strip()) > 50:
+            logging.warning(f"⚠ Nombre inválido: {nombre}")
+            raise ValueError(ERROR_MESSAGES["invalid_name"])
+        return nombre.strip()
 
-        logging.debug("Fin de la inicialización de Mascota")  # DEBUG
+    @staticmethod
+    def validar_tipo(tipo: str) -> str:
+        """Valida el tipo de mascota."""
+        logging.debug(f"🔎 Validando tipo de mascota: {tipo}")
+        if tipo not in ["Perro", "Gato", "Ave", "Otro"]:
+            logging.warning(f"⚠ Tipo inválido: {tipo}")
+            raise ValueError(ERROR_MESSAGES["invalid_type"])
+        return tipo.strip()
+
+    @staticmethod
+    def validar_edad(edad: int) -> int:
+        """Valida la edad como un número entero positivo."""
+        logging.debug(f"🔎 Validando edad: {edad}")
+        if not isinstance(edad, int) or edad <= 0:
+            logging.warning(f"⚠ Edad inválida: {edad}")
+            raise ValueError(ERROR_MESSAGES["invalid_age"])
+        return edad
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convierte el objeto Mascota a un diccionario."""
-        logging.debug("Convirtiendo Mascota a diccionario")  # DEBUG
-
-        if self.id is None:
-            logging.warning("⚠ Se intentó convertir una Mascota sin ID")  # WARNING
-
+        """Convierte el objeto Mascota a un diccionario con tolerancia a errores."""
+        logging.debug("🔄 Convirtiendo Mascota a diccionario")
         return {
             "id": getattr(self, "id", None),
-            "nombre": self.nombre,
-            "tipo": self.tipo,
-            "edad": self.edad,
+            "nombre": getattr(self, "nombre", "Desconocido"),
+            "tipo": getattr(self, "tipo", "Desconocido"),
+            "edad": getattr(self, "edad", 0)
         }

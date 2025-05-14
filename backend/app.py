@@ -1,142 +1,98 @@
-<<<<<<< HEAD
 import os
-import logging
 import sys
+import logging
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from backend.models import db
 from backend.models.mascota import Mascota
 
-# ✅ Configurar logging con soporte UTF-8 y control de niveles
+# ✅ Asegurar compatibilidad UTF-8 en stdout
+sys.stdout.reconfigure(encoding='utf-8')
+
+# ✅ Configurar logging sin emojis para evitar errores en Windows
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("backend/logs/funkelin_app.log", encoding="utf-8"),  # ✅ Asegurar codificación en archivos
-        logging.StreamHandler(sys.stdout)  # ✅ Evitar errores de codificación en consola
+        logging.FileHandler("backend/logs/funkelin_app.log", encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
     ]
 )
 
-# ✅ Configurar `StreamHandler` con control de salida en consola
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.INFO)  # ✅ Limitar la consola solo a INFO y superiores
-console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logging.debug("🔄 Iniciando la configuración de Funkelin API")
 
-# ✅ Agregar el manejador al `root logger`
-logging.getLogger().addHandler(console_handler)
+# ✅ Diccionario centralizado de errores
+ERROR_MESSAGES = {
+    "import_fail": "No se pudo importar el Blueprint `mascotas_bp`. Verifica rutas o dependencias.",
+    "db_create_fail": "Error al crear las tablas en la base de datos.",
+    "unexpected_error": "Error inesperado en la inicialización de la aplicación."
+}
 
-logging.debug("🛠️ Iniciando configuración principal de Funkelin")  # DEBUG
-
-# ✅ Configuración segura de la aplicación Flask
+# ✅ Instancia de Flask
 app = Flask(__name__)
 
-# ✅ Obtener la URI de la base de datos desde variables de entorno
+# ✅ Configuración de base de datos
 DATABASE_PATH = os.getenv("DATABASE_PATH", "backend/mascotas.db")
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.abspath(DATABASE_PATH)}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-logging.info(f"✅ Base de datos configurada en: {os.path.abspath(DATABASE_PATH)}")  # INFO
+logging.info(f"✅ INSTANCIA GLOBAL DE SQLAlchemy CREADA - Base de datos en: {os.path.abspath(DATABASE_PATH)}")
 
-# ✅ Inicializar la base de datos con la aplicación Flask
-db.init_app(app)
-logging.info("✅ Base de datos inicializada con Flask")  # INFO
+# ✅ Inicializar DB
+try:
+    db.init_app(app)
+    logging.info("✅ BASE DE DATOS INICIALIZADA CON FLASK")
+except Exception as e:
+    logging.critical(f"⚠ {ERROR_MESSAGES['unexpected_error']} - Detalles: {e}")
+    raise RuntimeError(ERROR_MESSAGES["unexpected_error"])
 
-# ✅ Habilitar CORS con control refinado de accesos
+# ✅ Configuración de CORS
 CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGINS", "*")}})
-logging.info("✅ CORS configurado correctamente")  # INFO
+logging.info("✅ CORS CONFIGURADO CORRECTAMENTE")
 
-# ✅ Registrar rutas después de inicializar `app` y `db`
+# ✅ Registro de Blueprint
 try:
     from backend.routes.mascotas import mascotas_bp
     app.register_blueprint(mascotas_bp)
-    logging.info("✅ Blueprint `mascotas_bp` registrado exitosamente")  # INFO
+    logging.info("✅ Blueprint `mascotas_bp` registrado correctamente")
 except ImportError as e:
-    logging.error(f"⚠️ Error al registrar `mascotas_bp`: {e}")  # ERROR
+    logging.error(f"⚠ {ERROR_MESSAGES['import_fail']} - Detalles: {e}")
 
-# ✅ Crear tablas dentro del contexto de Flask con manejo seguro de errores
-logging.debug("🛠️ Creando tablas en la base de datos")  # DEBUG
+# ✅ Creación de tablas en la base de datos
 with app.app_context():
     try:
         db.create_all()
-        logging.info("✅ Tablas creadas exitosamente")  # INFO
+        logging.info("✅ TABLAS CREADAS EXITOSAMENTE")
     except Exception as e:
-        logging.error(f"⚠️ Error al crear tablas en la base de datos: {e}")  # ERROR
+        logging.error(f"⚠ {ERROR_MESSAGES['db_create_fail']} - Detalles: {e}")
 
 # ✅ Ruta principal
 @app.route("/")
 def home():
-    logging.info("✅ Endpoint `/` ejecutado correctamente")  # INFO
-    return jsonify({"mensaje": "Bienvenido a Funkelin API Modularizado 🚀"}), 200
+    logging.info("✅ ENDPOINT `/` EJECUTADO CORRECTAMENTE")
+    return jsonify({"mensaje": "Bienvenido a Funkelin API Modularizado"}), 200
 
-# ✅ Ruta de depuración con validación de conexión
+# ✅ Ruta de depuración
 @app.route("/api/debug", methods=["GET"])
 def debug():
-    """Consulta todos los objetos Mascota registrados en la base de datos con manejo seguro."""
-    logging.debug("🔎 Ejecutando `debug()` para verificar conexión con la base de datos")  # DEBUG
+    """Consulta todos los objetos Mascota registrados en la base de datos."""
+    logging.debug("🔄 Ejecutando `debug()` para verificar conexión")
     try:
         with app.app_context():
-            if not db.session.is_active:
-                raise RuntimeError("⚠️ La conexión con la base de datos no está activa.")
-
             mascotas = Mascota.query.all()
             if not mascotas:
-                logging.warning("⚠️ No hay mascotas registradas en la base de datos")  # WARNING
+                logging.warning("⚠ NO HAY MASCOTAS REGISTRADAS EN LA BASE DE DATOS")
                 return jsonify({"mensaje": "No hay mascotas registradas."}), 404
 
-            logging.info(f"✅ Se consultaron {len(mascotas)} mascotas")  # INFO
+            logging.info(f"✅ SE CONSULTARON {len(mascotas)} MASCOTAS")
             return jsonify([m.to_dict() for m in mascotas]), 200
-    except RuntimeError as re:
-        logging.error(f"⚠️ Error de conexión: {str(re)}")  # ERROR
-        return jsonify({"error": f"Error de conexión a la base de datos: {str(re)}"}), 500
     except Exception as e:
-        logging.error(f"⚠️ Error crítico en `debug()`: {str(e)}")  # ERROR
+        logging.error(f"⚠ ERROR EN `debug()`: {str(e)}")
         return jsonify({"error": f"Error al consultar mascotas: {str(e)}"}), 500
 
-# ✅ Ejecutar la aplicación en modo seguro con control de entorno
+# ✅ Ejecución del servidor con control de entorno
 if __name__ == "__main__":
     flask_env = os.getenv("FLASK_ENV", "development")
-    logging.info(f"🚀 Iniciando Funkelin API en modo: {flask_env}")  # INFO
+    logging.info(f"✅ INICIANDO FUNKELIN API EN MODO: {flask_env}")
     app.run(debug=(flask_env == "development"))
-=======
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from routes.mascotas import mascotas_bp
-from models import db  # Importar db desde models/__init__.py
-import os  # Importar os para trabajar con rutas
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mascotas.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Inicializar SQLAlchemy con Flask
-db.init_app(app)
-
-# Imprimir la ubicación de la base de datos
-print("Base de datos activa:", os.path.abspath("mascotas.db"))
-
-# Crear tablas en la base de datos
-with app.app_context():
-    db.create_all()
-
-# Registrar rutas
-app.register_blueprint(mascotas_bp)
-
-# Ruta principal
-@app.route('/')
-def home():
-    return "Bienvenido a Funkelin API Modularizado 🚀"
-
-# Ruta de depuración
-@app.route('/api/debug', methods=['GET'])
-def debug():
-    try:
-        from models.mascota import Mascota
-        mascotas = Mascota.query.all()
-        return jsonify([m.to_dict() for m in mascotas]), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
->>>>>>> f978f38 (Reinstanciación completa del backend:)

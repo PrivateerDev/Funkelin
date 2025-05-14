@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Any
 import logging
@@ -9,13 +8,21 @@ if TYPE_CHECKING:
 
 # ✅ Configurar logging con formato detallado y múltiples niveles
 logging.basicConfig(
-    level=logging.DEBUG,  # Mínimo nivel para registrar todo
+    level=logging.DEBUG,  # Registrar todos los niveles
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("backend/logs/funkelin_model.log"),
+        logging.FileHandler("backend/logs/funkelin_model.log", encoding="utf-8"),  # Asegurar codificación UTF-8
         logging.StreamHandler()
     ]
 )
+
+# ✅ Diccionario centralizado de mensajes de error
+ERROR_MESSAGES = {
+    "invalid_name": "El nombre debe contener solo letras y espacios, sin números ni símbolos.",
+    "invalid_type": "Tipo de mascota no válido. Debe ser 'Perro', 'Gato', 'Ave' o 'Otro'.",
+    "invalid_age": "La edad debe ser un número entero positivo mayor a 0.",
+    "unexpected_error": "Error inesperado al inicializar el modelo de Mascota."
+}
 
 class Mascota(db.Model):  # type: ignore
     """Modelo de Mascota en la base de datos con validaciones defensivas."""
@@ -29,71 +36,53 @@ class Mascota(db.Model):  # type: ignore
 
     def __init__(self, nombre: str, tipo: str, edad: int) -> None:
         """Inicializa una instancia de Mascota con validaciones seguras."""
-        logging.debug("Inicio de la inicialización de Mascota")  # DEBUG
+        logging.debug("🔄 Inicio de la inicialización de Mascota")
 
         try:
             self.nombre = self.validar_nombre(nombre)
             self.tipo = self.validar_tipo(tipo)
             self.edad = self.validar_edad(edad)
 
-            logging.info(f"✅ Mascota creada exitosamente: {self.to_dict()}")  # INFO
+            logging.info(f"✅ Mascota creada exitosamente: {self.to_dict()}")
         except ValueError as e:
-            logging.error(f"⚠ Error al crear Mascota: {str(e)}")  # ERROR
+            logging.error(f"⚠ Error al crear Mascota: {str(e)}")
             raise
 
-        logging.debug("Fin de la inicialización de Mascota")  # DEBUG
+        logging.debug("✅ Fin de la inicialización de Mascota")
 
     @staticmethod
     def validar_nombre(nombre: str) -> str:
         """Valida y sanitiza el nombre."""
-        logging.debug(f"Validando nombre: {nombre}")
+        logging.debug(f"🔎 Validando nombre: {nombre}")
         if not isinstance(nombre, str) or len(nombre.strip()) < 2 or len(nombre.strip()) > 50:
-            logging.warning(f"Nombre inválido: {nombre}")  # WARNING
-            raise ValueError("⚠ El nombre debe tener entre 2 y 50 caracteres.")
+            logging.warning(f"⚠ Nombre inválido: {nombre}")
+            raise ValueError(ERROR_MESSAGES["invalid_name"])
         return nombre.strip()
 
     @staticmethod
     def validar_tipo(tipo: str) -> str:
         """Valida el tipo de mascota."""
-        logging.debug(f"Validando tipo de mascota: {tipo}")
-        if not isinstance(tipo, str) or tipo.strip() not in ["Perro", "Gato", "Ave", "Otro"]:
-            logging.warning(f"Tipo de mascota inválido: {tipo}")  # WARNING
-            raise ValueError("⚠ Tipo de mascota no válido.")
+        logging.debug(f"🔎 Validando tipo de mascota: {tipo}")
+        if tipo not in ["Perro", "Gato", "Ave", "Otro"]:
+            logging.warning(f"⚠ Tipo inválido: {tipo}")
+            raise ValueError(ERROR_MESSAGES["invalid_type"])
         return tipo.strip()
 
     @staticmethod
     def validar_edad(edad: int) -> int:
         """Valida la edad como un número entero positivo."""
-        logging.debug(f"Validando edad: {edad}")
+        logging.debug(f"🔎 Validando edad: {edad}")
         if not isinstance(edad, int) or edad <= 0:
-            logging.warning(f"Edad inválida: {edad}")  # WARNING
-            raise ValueError("⚠ La edad debe ser un número entero positivo.")
+            logging.warning(f"⚠ Edad inválida: {edad}")
+            raise ValueError(ERROR_MESSAGES["invalid_age"])
         return edad
 
     def to_dict(self) -> Dict[str, Any]:
         """Convierte el objeto Mascota a un diccionario con tolerancia a errores."""
-        logging.debug("Convirtiendo Mascota a diccionario")  # DEBUG
+        logging.debug("🔄 Convirtiendo Mascota a diccionario")
         return {
             "id": getattr(self, "id", None),
             "nombre": getattr(self, "nombre", "Desconocido"),
             "tipo": getattr(self, "tipo", "Desconocido"),
             "edad": getattr(self, "edad", 0)
-=======
-from models import db  # Importar db desde models/__init__.py
-
-class Mascota(db.Model):
-    """Modelo para representar una mascota en la base de datos."""
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(80), nullable=False)
-    tipo = db.Column(db.String(80), nullable=False)
-    edad = db.Column(db.Integer, nullable=False)
-
-    def to_dict(self):
-        """Convierte la instancia de Mascota a un diccionario."""
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "tipo": self.tipo,
-            "edad": self.edad
->>>>>>> f978f38 (Reinstanciación completa del backend:)
         }
