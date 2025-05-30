@@ -1,2 +1,9 @@
-"__pycache__/"
-"backend/mascotas.db"
+__pycache__/ 
+echo *.pyc >> .gitignore
+echo *.db >> .gitignore
+echo venv/ >> .gitignore
+echo logs/ >> .gitignore__pycache__/ 
+__pycache__/ 
+*.db 
+venv/ 
+logs/ 
